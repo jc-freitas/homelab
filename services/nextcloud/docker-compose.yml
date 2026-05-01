@@ -20,7 +20,7 @@ services:
       - db
     volumes:
       - nextcloud:/var/www/html
-      - /mnt/nextcloud-data:/mnt/storage
+      - /mnt/nextcloud-data:/var/www/html/data
     env_file: .env
 volumes:
   nextcloud:
