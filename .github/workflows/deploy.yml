@@ -3,7 +3,7 @@ name: 🚀 Deploy to Homelab
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:      # permite executar manualmente pelo GitHub
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -19,8 +19,8 @@ jobs:
           REMOTE_HOST: ${{ secrets.HOST }}
           REMOTE_USER: ${{ secrets.USERNAME }}
           TARGET: /home/deploy/homelab
-          EXCLUDE: ".git, .github, .gitignore, .env*"   # ignora .env e .env.example também se quiser
-          ARGS: "-avz --delete"                        # remove arquivos que não existem mais no repositório
+          EXCLUDE: ".git, .github, .gitignore, .env*"
+          ARGS: "-avz --delete"
 
       - name: Aplicar docker compose em todos os serviços
         uses: appleboy/ssh-action@v1
