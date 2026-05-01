@@ -31,7 +31,7 @@ jobs:
           port: ${{ secrets.PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /home/deploy/homelab
+            cd /home/deploy/homelab/services
             for service_dir in */; do
               cd "$service_dir"
               if [ -f docker-compose.yml ]; then
