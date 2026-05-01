@@ -61,3 +61,4 @@ services:
 
 volumes:
   model-cache:
+  immich_db:
