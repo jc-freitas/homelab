@@ -7,6 +7,6 @@ services:
     ports:
       - '8181:8080'
     volumes:
-      - /mnt/docker-nfs/trillium:/home/node/trilium-data
+      - /mnt/docker-nfs/trilium:/home/node/trilium-data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
