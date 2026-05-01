@@ -1,0 +1,27 @@
+services:
+  db:
+    image: mariadb:lts
+    restart: always
+    command: --transaction-isolation=READ-COMMITTED
+    volumes:
+      - db:/var/lib/mysql
+    env_file: .env
+  redis:
+    image: redis:alpine
+    restart: always
+
+  app:
+    image: nextcloud
+    restart: always
+    ports:
+      - 8337:80
+    depends_on:
+      - redis
+      - db
+    volumes:
+      - nextcloud:/var/www/html
+      - /mnt/storage:/mnt/storage
+    env_file: .env
+volumes:
+  nextcloud:
+  db:

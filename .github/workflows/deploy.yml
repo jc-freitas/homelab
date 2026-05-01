@@ -1,0 +1,40 @@
+name: 🚀 Deploy to Homelab
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:      # permite executar manualmente pelo GitHub
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sincronizar arquivos com o servidor
+        uses: easingthemes/ssh-deploy@v5.1.0
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.HOST }}
+          REMOTE_USER: ${{ secrets.USERNAME }}
+          TARGET: /home/deploy/homelab
+          EXCLUDE: ".git, .github, .gitignore, .env*"   # ignora .env e .env.example também se quiser
+          ARGS: "-avz --delete"                        # remove arquivos que não existem mais no repositório
+
+      - name: Aplicar docker compose em todos os serviços
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/deploy/homelab
+            for service_dir in */; do
+              cd "$service_dir"
+              if [ -f docker-compose.yml ]; then
+                echo "🔄 Atualizando $service_dir..."
+                docker compose up -d --remove-orphans
+              fi
+              cd ..
+            done

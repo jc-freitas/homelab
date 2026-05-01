@@ -1,0 +1,14 @@
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    restart: unless-stopped
+    environment:
+      DATA_FOLDER: /data
+      DATABASE_MAX_CONNS: 10
+      WEB_VAULT_ENABLED: "true"
+      DOMAIN: ${DOMAIN}
+    volumes:
+      - /mnt/docker-nfs/vaultwarden/data:/data
+    ports:
+      - "80:80"
