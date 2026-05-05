@@ -3,6 +3,8 @@ name: 🚀 Deploy to Homelab
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'services/**'
   workflow_dispatch:
 
 jobs:
