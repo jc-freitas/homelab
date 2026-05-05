@@ -9,7 +9,7 @@ Aqui é onde organizo toda a infraestrutura, serviços e automações que rodam 
 
 ## 🧭 Arquitetura
 
-![Network Diagram](./diagram.png)
+![Network Diagram](../diagram.png)
 
 Minha rede é segmentada em VLANs para isolamento e segurança:
 
