@@ -1,7 +1,7 @@
 # 🏠 Homelab
 
 Seja bem-vindo ao projeto do meu homelab!
-Aqui é onde organizo toda a infraestrutura, serviços e automações que rodam localmente — com foco em **controle, privacidade e independência**.
+Aqui é onde organizo toda a infraestrutura, serviços e automações que rodam localmente com foco em **controle, privacidade e independência**.
 
 > 💡 A ideia é simples: **parar de depender das Big Techs e rodar tudo em casa.**
 
@@ -27,14 +27,14 @@ Minha rede é segmentada em VLANs para isolamento e segurança:
 
 ### 🖥️ Host
 
-* **Proxmox** — virtualização principal
-* **TrueNAS VM** — storage central (NFS/SMB)
+* **Proxmox** - virtualização principal
+* **TrueNAS VM** - storage central (NFS/SMB)
 
 ### 🌐 Rede
 
-* **OpenWrt** — roteador + firewall
-* **AdGuard Home** — DNS + bloqueio de anúncios
-* **WireGuard** — roteia todo o tráfego da VLAN Trusted para uma VPN
+* **OpenWrt** - roteador + firewall
+* **AdGuard Home** - DNS + bloqueio de anúncios
+* **WireGuard** - roteia todo o tráfego da VLAN Trusted para uma VPN
 
 ---
 
