@@ -57,7 +57,7 @@ All services run via Docker:
 ```bash
 /services
 ├── cloudflared     # Tunnel for external access
-├── evolution-api   # Custom API
+├── evolution-api   # Open source WhatsApp API
 ├── immich          # Photos (Google Photos replacement)
 ├── n8n             # Automation
 ├── nextcloud       # Personal cloud
