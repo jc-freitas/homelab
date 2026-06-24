@@ -1,0 +1,49 @@
+services:
+  homeassistant:
+    container_name: homeassistant
+    image: homeassistant/home-assistant
+    volumes:
+      - home-assistant:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro
+    restart: unless-stopped
+    privileged: false
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+  node-red:
+    container_name: nodered
+    image: nodered/node-red:latest
+    restart: unless-stopped
+    environment:
+      - TZ=America/Los_Angeles
+    ports:
+      - "1880:1880"
+    volumes:
+      - nodered:/data
+
+  mosquitto:
+    container_name: mosquitto
+    image: eclipse-mosquitto:latest
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./intelbras/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./intelbras/mosquitto/passwd:/mosquitto/config/passwd:ro
+      - mosquitto-data:/mosquitto/data
+
+  intelbras-bridge:
+    container_name: intelbras-bridge
+    build: ./intelbras/bridge
+    restart: unless-stopped
+    depends_on:
+      - mosquitto
+    env_file:
+      - ./intelbras/bridge/.env
+
+volumes:
+  home-assistant:
+  nodered:
+  mosquitto-data:
