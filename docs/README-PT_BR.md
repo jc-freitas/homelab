@@ -45,10 +45,15 @@ Todos os serviços rodam via Docker:
 ```bash
 /services
 ├── cloudflared     # Tunnel para acesso externo
+├── dispatcharr     # Gerenciamento de IPTV/EPG
 ├── evolution-api   # API Código Aberto para o WhatsApp
+├── gitea           # Git auto-hospedado
+├── homeassistant   # Automação residencial
 ├── immich          # Fotos (Google Photos replacement)
+├── jellyfin        # Servidor de mídia
 ├── n8n             # Automação
 ├── nextcloud       # Cloud pessoal
+├── rsshub          # Gerador de feeds RSS
 ├── trilium         # Notas
 └── vaultwarden     # Gerenciador de senhas
 ```
