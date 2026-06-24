@@ -1,0 +1,155 @@
+services:
+  web:
+    image: ghcr.io/dispatcharr/dispatcharr:latest
+    container_name: dispatcharr_web
+    restart: unless-stopped
+
+    ports:
+      - "10.0.20.2:9191:9191"
+
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+    environment:
+      DISPATCHARR_ENV: modular
+
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: dispatcharr
+      POSTGRES_USER: dispatch
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+      DISPATCHARR_LOG_LEVEL: info
+
+      # GPU transcoding priority
+      UWSGI_NICE_LEVEL: -5
+
+    volumes:
+      - ./data:/data
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    cap_add:
+      - SYS_NICE
+
+    # Intel/AMD GPU acceleration
+    devices:
+      - /dev/dri:/dev/dri
+
+    group_add:
+      - video
+      - render
+
+    security_opt:
+      - no-new-privileges:true
+
+    mem_limit: 6g
+    cpus: 4
+
+  celery:
+    image: ghcr.io/dispatcharr/dispatcharr:latest
+    container_name: dispatcharr_celery
+    restart: unless-stopped
+
+    entrypoint: ["/app/docker/entrypoint.celery.sh"]
+
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      web:
+        condition: service_started
+
+    environment:
+      DISPATCHARR_ENV: modular
+
+      DISPATCHARR_PORT: 9191
+
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: dispatcharr
+      POSTGRES_USER: dispatch
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+      DISPATCHARR_LOG_LEVEL: info
+
+      DJANGO_SETTINGS_MODULE: dispatcharr.settings
+      PYTHONUNBUFFERED: 1
+
+      # Lower priority for background jobs
+      CELERY_NICE_LEVEL: 5
+
+    volumes:
+      - ./data:/data
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    security_opt:
+      - no-new-privileges:true
+
+    mem_limit: 4g
+    cpus: 2
+
+  db:
+    image: postgres:17-alpine
+    container_name: dispatcharr_db
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: dispatcharr
+      POSTGRES_USER: dispatch
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dispatch -d dispatcharr"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    security_opt:
+      - no-new-privileges:true
+
+    mem_limit: 2g
+
+  redis:
+    image: redis:7-alpine
+    container_name: dispatcharr_redis
+    restart: unless-stopped
+
+    command: >
+      redis-server
+      --save 60 1
+      --loglevel warning
+
+    volumes:
+      - redis_data:/data
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    security_opt:
+      - no-new-privileges:true
+
+    mem_limit: 512m
+
+volumes:
+  postgres_data:
+  redis_data:
