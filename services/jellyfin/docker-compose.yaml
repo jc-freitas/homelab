@@ -1,0 +1,19 @@
+services:
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Sao_Paulo
+      - DOCKER_MODS=linuxserver/mods:jellyfin-opencl-intel
+    volumes:
+      - jellyfin:/config
+      - /home/deploy/homelab/services/jellyfin/data:/data
+    ports:
+      - "10.0.20.2:8096:8096"
+    devices:
+      - /dev/dri:/dev/dri
+    restart: unless-stopped
+volumes:
+  jellyfin:
