@@ -1,3 +1,4 @@
+
 services:
   immich-server:
     container_name: immich_server
@@ -5,10 +6,10 @@ services:
     devices:
       - /dev/dri:/dev/dri
     volumes:
-      - /mnt/immich:/data
+      - /mnt/immich/upload:/data
       - /etc/localtime:/etc/localtime:ro
     ports:
-      - '2283:2283'
+      - '10.0.20.2:2283:2283'
     depends_on:
       - redis
       - database
@@ -24,7 +25,6 @@ services:
     container_name: immich_machine_learning
     devices:
       - /dev/dri:/dev/dri
-      - /dev/kfd:/dev/kfd
     group_add:
       - 104
       - video
