@@ -1,3 +1,4 @@
+
 services:
   vaultwarden:
     image: vaultwarden/server:latest
@@ -9,6 +10,6 @@ services:
       WEB_VAULT_ENABLED: "true"
       DOMAIN: ${DOMAIN}
     volumes:
-      - /mnt/docker-nfs/vaultwarden/data:/data
+      - /home/deploy/homelab/services/vaultwarden/data:/data
     ports:
-      - "80:80"
+      - "10.0.20.2:80:80"
