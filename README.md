@@ -57,10 +57,15 @@ All services run via Docker:
 ```bash
 /services
 ├── cloudflared     # Tunnel for external access
+├── dispatcharr     # IPTV/EPG management
 ├── evolution-api   # Open source WhatsApp API
+├── gitea           # Self-hosted git
+├── homeassistant   # Home automation
 ├── immich          # Photos (Google Photos replacement)
+├── jellyfin        # Media server
 ├── n8n             # Automation
 ├── nextcloud       # Personal cloud
+├── rsshub          # RSS feed generator
 ├── trilium         # Notes
 └── vaultwarden     # Password manager
 ```
