@@ -11,15 +11,19 @@ services:
     ports:
       - '10.0.20.2:2283:2283'
     depends_on:
-      - redis
       - database
     restart: always
     healthcheck:
       disable: false
     environment:
       - UPLOAD_LOCATION=/data
+      - REDIS_HOSTNAME=redis-shared
+      - REDIS_DBINDEX=2
     env_file:
       - .env
+    networks:
+      - default
+      - shared-infra
 
   immich-machine-learning:
     container_name: immich_machine_learning
@@ -36,13 +40,6 @@ services:
       disable: false
     env_file:
       - .env
-
-  redis:
-    container_name: immich_redis
-    image: docker.io/valkey/valkey:9@sha256:3b55fbaa0cd93cf0d9d961f405e4dfcc70efe325e2d84da207a0a8e6d8fde4f9
-    healthcheck:
-      test: redis-cli ping || exit 1
-    restart: always
 
   database:
     container_name: immich_postgres
@@ -61,6 +58,27 @@ services:
     env_file:
       - .env
 
+  postgres-exporter:
+    container_name: immich-postgres-exporter
+    image: prometheuscommunity/postgres-exporter:v0.15.0
+    restart: always
+    environment:
+      DATA_SOURCE_USER: ${DB_USERNAME}
+      DATA_SOURCE_PASS: ${DB_PASSWORD}
+      DATA_SOURCE_URI: "database:5432/${DB_DATABASE_NAME}?sslmode=disable"
+    networks:
+      - default
+      - monitoring
+
 volumes:
   model-cache:
   immich_db:
+
+networks:
+  default:
+  shared-infra:
+    external: true
+    name: shared-infra
+  monitoring:
+    external: true
+    name: monitoring
