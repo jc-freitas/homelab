@@ -1,0 +1,34 @@
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: redis-shared
+    restart: unless-stopped
+    command: >
+      redis-server
+      --appendonly yes
+      --save 60 1
+    volumes:
+      - redis-shared-data:/data
+    networks:
+      - shared-infra
+      - monitoring
+
+  redis-exporter:
+    image: oliver006/redis_exporter:v1.62.0
+    container_name: redis-shared-exporter
+    restart: unless-stopped
+    environment:
+      REDIS_ADDR: redis://redis-shared:6379
+    networks:
+      - shared-infra
+      - monitoring
+
+volumes:
+  redis-shared-data:
+
+networks:
+  shared-infra:
+    name: shared-infra
+  monitoring:
+    external: true
+    name: monitoring
