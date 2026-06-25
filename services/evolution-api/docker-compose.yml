@@ -4,7 +4,6 @@ services:
     image: evoapicloud/evolution-api:latest
     restart: always
     depends_on:
-      - redis
       - evolution-postgres
     ports:
       - "8080:8080"
@@ -12,6 +11,7 @@ services:
       - evolution_instances:/evolution/instances
     networks:
       - evolution-net
+      - shared-infra
     env_file: .env
     expose:
       - "8080"
@@ -34,21 +34,6 @@ services:
       - evolution-net
     
 
-  redis:
-    container_name: evolution_redis
-    image: redis:latest
-    restart: always
-    command: >
-      redis-server --port 6379 --appendonly yes
-    volumes:
-      - evolution_redis:/data
-    networks:
-      evolution-net:
-        aliases:
-          - evolution-redis
-
-    expose:
-      - "6379"
   evolution-postgres:
     container_name: evolution_postgres
     image: postgres:15
@@ -71,12 +56,28 @@ services:
           - evolution-postgres
     expose:
       - "5432"
+
+  postgres-exporter:
+    container_name: evolution-postgres-exporter
+    image: prometheuscommunity/postgres-exporter:v0.15.0
+    restart: always
+    environment:
+      DATA_SOURCE_NAME: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@evolution-postgres:5432/${POSTGRES_DB}?sslmode=disable"
+    networks:
+      - evolution-net
+      - monitoring
+
 volumes:
   evolution_instances:
-  evolution_redis:
   postgres_data:
 
 networks:
   evolution-net:
     name: evolution-net
     driver: bridge
+  shared-infra:
+    external: true
+    name: shared-infra
+  monitoring:
+    external: true
+    name: monitoring
