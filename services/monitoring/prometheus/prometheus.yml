@@ -1,0 +1,28 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: node-exporter
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  - job_name: cadvisor
+    static_configs:
+      - targets: ['cadvisor:8080']
+
+  - job_name: dispatcharr-postgres
+    static_configs:
+      - targets: ['dispatcharr-postgres-exporter:9187']
+
+  - job_name: evolution-postgres
+    static_configs:
+      - targets: ['evolution-postgres-exporter:9187']
+
+  - job_name: immich-postgres
+    static_configs:
+      - targets: ['immich-postgres-exporter:9187']
+
+  - job_name: shared-redis
+    static_configs:
+      - targets: ['redis-shared-exporter:9121']
