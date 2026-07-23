@@ -1,0 +1,19 @@
+# Cloudflared runs ON THE ROUTER (OpenWrt, aarch64) as of 2026-07-20, not the
+# server — the router is the only always-on device, so the public tunnel now
+# survives server reboots/crashes. Vaultwarden also lives on the router, so the
+# vault stays reachable from outside even when the server is fully down.
+#
+# Deployed on the router's USB Docker (see openwrt-router-25125-stable memory):
+#   dir:  /opt/docker-usb/cloudflared/   (.env holds TUNNEL_TOKEN)
+#   run:  docker compose -f docker-compose.router.yml up -d
+#
+# Uses host networking so it can reach the on-server origins at 10.0.20.2.
+# The old server-side cloudflared is stopped with restart=no as rollback.
+services:
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    restart: unless-stopped
+    network_mode: host
+    command: tunnel --no-autoupdate run
+    env_file: .env
