@@ -1,0 +1,11 @@
+services:
+  searxng:
+    image: docker.io/searxng/searxng:latest
+    container_name: searxng
+    restart: unless-stopped
+    environment:
+      - SEARXNG_BASE_URL=http://10.0.20.2:8888/
+    volumes:
+      - /home/deploy/homelab/services/searxng/config:/etc/searxng
+    ports:
+      - "10.0.20.2:8888:8080"
