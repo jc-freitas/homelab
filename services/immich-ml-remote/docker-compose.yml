@@ -1,0 +1,35 @@
+# Runs on the Windows PC (via Docker Desktop), NOT on the homelab host.
+# Offloads Immich's Smart Search / Face Detection workload off the
+# i5-7200U homelab server, which is CPU-constrained.
+#
+# Version MUST match the main immich-server version (currently v3.0.3) —
+# mismatched ML/server versions can cause instability per Immich docs.
+#
+# Setup on the Windows PC:
+#   1. Install Docker Desktop (WSL2 backend).
+#   2. docker compose up -d
+#   3. In Immich admin panel: Administration -> Machine Learning Settings
+#      -> Add URL -> http://<windows-pc-lan-ip>:3003
+#
+# GPU note: this PC has an AMD GPU. Immich's -rocm image needs native
+# /dev/kfd + /dev/dri, which Docker Desktop on WSL2 does not pass through,
+# so ROCm acceleration is NOT usable this way — running CPU-only below.
+# AMD has an experimental WSL2 ROCm bridge (ROCDXG) outside of what
+# Immich's own -rocm image supports; not worth the fragility for now.
+# https://github.com/immich-app/immich/discussions/26459
+#
+# The ML container has no authentication — do not expose this port
+# beyond the LAN.
+
+services:
+  immich-machine-learning:
+    container_name: immich_machine_learning
+    image: ghcr.io/immich-app/immich-machine-learning:v3.0.3
+    volumes:
+      - model-cache:/cache
+    restart: unless-stopped
+    ports:
+      - "3003:3003"
+
+volumes:
+  model-cache:
