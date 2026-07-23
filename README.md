@@ -57,7 +57,6 @@ All services run via Docker:
 ```bash
 /services
 ├── cloudflared     # Tunnel for external access
-├── dispatcharr     # IPTV/EPG management
 ├── evolution-api   # Open source WhatsApp API
 ├── gitea           # Self-hosted git
 ├── homeassistant   # Home automation
