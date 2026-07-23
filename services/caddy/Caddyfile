@@ -1,0 +1,145 @@
+{
+	auto_https off
+}
+
+# Explicit listen addresses, excluding 10.0.1.1 (management VLAN — reserved
+# for LuCI/uhttpd). Covers infra/services/lan/iot VLAN gateways plus the
+# router's Tailscale IP, so *.local resolves the same way on LAN and tailnet.
+(lan) {
+	bind 10.0.10.1 10.0.20.1 10.0.30.1 10.0.40.1 100.118.103.46
+}
+
+http://searxng.local {
+	import lan
+	reverse_proxy 10.0.20.2:8888
+}
+
+http://homepage.local {
+	import lan
+	reverse_proxy 10.0.20.2:3005
+}
+
+http://nextcloud.local {
+	import lan
+	reverse_proxy 10.0.20.2:8337
+}
+
+http://grafana.local {
+	import lan
+	reverse_proxy 10.0.20.2:3002
+}
+
+http://homebox.local {
+	import lan
+	reverse_proxy 10.0.20.2:7745
+}
+
+http://jellyfin.local {
+	import lan
+	reverse_proxy 10.0.20.2:8096
+}
+
+http://prowlarr.local {
+	import lan
+	reverse_proxy 10.0.20.2:9696
+}
+
+http://radarr.local {
+	import lan
+	reverse_proxy 10.0.20.2:7878
+}
+
+http://bazarr.local {
+	import lan
+	reverse_proxy 10.0.20.2:6767
+}
+
+http://jellyseerr.local {
+	import lan
+	reverse_proxy 10.0.20.2:5055
+}
+
+http://flaresolverr.local {
+	import lan
+	reverse_proxy 10.0.20.2:8191
+}
+
+http://qbittorrent.local {
+	import lan
+	reverse_proxy 10.0.20.2:8082
+}
+
+http://sonarr.local {
+	import lan
+	reverse_proxy 10.0.20.2:8989
+}
+
+http://immich.local {
+	import lan
+	reverse_proxy 10.0.20.2:2283
+}
+
+http://dispatcharr.local {
+	import lan
+	reverse_proxy 10.0.20.2:9191
+}
+
+http://vaultwarden.local {
+	import lan
+	reverse_proxy 10.0.20.1:8084
+}
+
+http://mapas.local {
+	import lan
+	reverse_proxy 10.0.20.2:8081
+}
+
+http://mapas-grafana.local {
+	import lan
+	reverse_proxy 10.0.20.2:3001
+}
+
+http://gitea.local {
+	import lan
+	reverse_proxy 10.0.20.2:3022
+}
+
+http://nodered.local {
+	import lan
+	reverse_proxy 10.0.20.2:1880
+}
+
+http://evolution.local {
+	import lan
+	reverse_proxy 10.0.20.2:8080
+}
+
+http://evolution-ui.local {
+	import lan
+	reverse_proxy 10.0.20.2:3000
+}
+
+http://rsshub.local {
+	import lan
+	reverse_proxy 10.0.20.2:1200
+}
+
+http://trilium.local {
+	import lan
+	reverse_proxy 10.0.20.2:8181
+}
+
+http://n8n.local {
+	import lan
+	reverse_proxy 10.0.20.2:5678
+}
+
+http://homeassistant.local {
+	import lan
+	reverse_proxy 10.0.20.2:8123
+}
+
+http://gatus.local {
+	import lan
+	reverse_proxy 127.0.0.1:8083
+}
