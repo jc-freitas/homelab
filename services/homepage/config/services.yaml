@@ -1,0 +1,152 @@
+- core:
+    - Grafana:
+        href: http://10.0.20.2:3002
+        icon: grafana.png
+        description: Metrics dashboard
+    - AdGuard Home:
+        href: http://10.0.10.1:3000
+        icon: adguard-home.png
+        description: DNS / ad blocking
+        widget:
+          type: adguard
+          url: http://10.0.10.1:3000
+          username: "{{HOMEPAGE_VAR_ADGUARD_USERNAME}}"
+          password: "{{HOMEPAGE_VAR_ADGUARD_PASSWORD}}"
+          fields: ["queries", "blocked", "filtered", "latency"]
+
+- apps:
+    - Vaultwarden:
+        href: https://vault.juliofreitas.dev.br
+        icon: vaultwarden.png
+        description: Password manager
+    - Immich:
+        href: http://10.0.20.2:2283
+        icon: immich.png
+        description: Photo backup
+        widget:
+          type: immich
+          url: http://10.0.20.2:2283
+          key: "{{HOMEPAGE_VAR_IMMICH_KEY}}"
+          version: 2
+          fields: ["photos", "videos", "storage"]
+    - Nextcloud:
+        href: http://10.0.20.2:8337
+        icon: nextcloud.png
+        description: Files / cloud storage
+        widget:
+          type: nextcloud
+          url: http://10.0.20.2:8337
+          key: "{{HOMEPAGE_VAR_NEXTCLOUD_KEY}}"
+          fields: ["freespace", "activeusers", "numfiles", "numshares"]
+    - Gitea:
+        href: http://10.0.20.2:3022
+        icon: gitea.png
+        description: Git hosting
+        widget:
+          type: gitea
+          url: http://10.0.20.2:3022
+          key: "{{HOMEPAGE_VAR_GITEA_KEY}}"
+          fields: ["repositories", "notifications", "issues", "pulls"]
+    - Trilium:
+        href: http://10.0.20.2:8181
+        icon: trilium.png
+        description: Notes
+    - n8n:
+        href: http://10.0.20.2:5678
+        icon: n8n.png
+        description: Automation
+    - Homebox:
+        href: http://10.0.20.2:7745
+        icon: homebox.png
+        description: Inventory tracker
+    - Evolution API:
+        href: http://10.0.20.2:8080
+        icon: whatsapp.png
+        description: WhatsApp API
+
+- media:
+    - Jellyfin:
+        href: http://10.0.20.2:8096
+        icon: jellyfin.png
+        description: Media server
+        widget:
+          type: jellyfin
+          url: http://10.0.20.2:8096
+          key: "{{HOMEPAGE_VAR_JELLYFIN_KEY}}"
+          version: 2
+          enableBlocks: true
+          enableNowPlaying: true
+    - Jellyseerr:
+        href: http://10.0.20.2:5055
+        icon: jellyseerr.png
+        description: Media requests
+    - Prowlarr:
+        href: http://10.0.20.2:9696
+        icon: prowlarr.png
+        description: Indexer manager
+        widget:
+          type: prowlarr
+          url: http://10.0.20.2:9696
+          key: "{{HOMEPAGE_VAR_PROWLARR_KEY}}"
+          fields: ["numberOfGrabs", "numberOfQueries", "numberOfFailGrabs", "numberOfFailQueries"]
+    - Radarr:
+        href: http://10.0.20.2:7878
+        icon: radarr.png
+        description: Movies
+        widget:
+          type: radarr
+          url: http://10.0.20.2:7878
+          key: "{{HOMEPAGE_VAR_RADARR_KEY}}"
+          enableQueue: true
+          fields: ["wanted", "queued", "movies"]
+    - Sonarr:
+        href: http://10.0.20.2:8989
+        icon: sonarr.png
+        description: TV shows
+        widget:
+          type: sonarr
+          url: http://10.0.20.2:8989
+          key: "{{HOMEPAGE_VAR_SONARR_KEY}}"
+          enableQueue: true
+          fields: ["wanted", "queued", "series"]
+    - Bazarr:
+        href: http://10.0.20.2:6767
+        icon: bazarr.png
+        description: Subtitles
+        widget:
+          type: bazarr
+          url: http://10.0.20.2:6767
+          key: "{{HOMEPAGE_VAR_BAZARR_KEY}}"
+          fields: ["missingEpisodes", "missingMovies"]
+    - qBittorrent:
+        href: http://10.0.20.2:8082
+        icon: qbittorrent.png
+        description: Torrent client
+        widget:
+          type: qbittorrent
+          url: http://10.0.20.2:8082
+          username: "{{HOMEPAGE_VAR_QBITTORRENT_USERNAME}}"
+          password: "{{HOMEPAGE_VAR_QBITTORRENT_PASSWORD}}"
+    - Tdarr:
+        href: http://10.0.20.2:8265
+        icon: tdarr.png
+        description: Transcoding
+        widget:
+          type: tdarr
+          url: http://10.0.20.2:8265
+          fields: ["queue", "processed", "errored", "saved"]
+
+- home:
+    - Home Assistant:
+        href: http://10.0.20.2:8123
+        icon: home-assistant.png
+        description: Home automation
+        widget:
+          type: homeassistant
+          url: http://10.0.20.2:8123
+          key: "{{HOMEPAGE_VAR_HOMEASSISTANT_KEY}}"
+          fields: ["people_home", "lights_on", "switches_on"]
+    - Node-RED:
+        href: http://10.0.20.2:1880
+        icon: node-red.png
+        description: Automation flows
