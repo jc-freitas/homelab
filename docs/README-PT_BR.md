@@ -45,7 +45,6 @@ Todos os serviços rodam via Docker:
 ```bash
 /services
 ├── cloudflared     # Tunnel para acesso externo
-├── dispatcharr     # Gerenciamento de IPTV/EPG
 ├── evolution-api   # API Código Aberto para o WhatsApp
 ├── gitea           # Git auto-hospedado
 ├── homeassistant   # Automação residencial
