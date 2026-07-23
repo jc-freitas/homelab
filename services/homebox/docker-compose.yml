@@ -1,0 +1,14 @@
+services:
+  homebox:
+    image: ghcr.io/sysadminsmedia/homebox:latest
+    container_name: homebox
+    restart: unless-stopped
+    environment:
+      HBOX_LOG_LEVEL: info
+      HBOX_LOG_FORMAT: text
+      HBOX_WEB_MAX_UPLOAD_SIZE: 10
+      HBOX_AUTH_API_KEY_PEPPER: ${HBOX_AUTH_API_KEY_PEPPER}
+    volumes:
+      - /home/deploy/homelab/services/homebox/data:/data
+    ports:
+      - "10.0.20.2:7745:7745"
