@@ -10,6 +10,8 @@ services:
     volumes:
       - jellyfin:/config
       - /home/deploy/homelab/services/jellyfin/data:/data
+      - /srv/media/movies:/movies:ro
+      - /srv/media/tv:/tv:ro
     ports:
       - "10.0.20.2:8096:8096"
     devices:
