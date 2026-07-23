@@ -14,13 +14,13 @@ services:
     image: nextcloud
     restart: always
     ports:
-      - 8337:80
+      - "10.0.20.2:8337:80"
     depends_on:
       - redis
       - db
     volumes:
       - nextcloud:/var/www/html
-      - /mnt/nextcloud-data:/var/www/html/data
+      - /mnt/nextcloud-smb:/var/www/html/data
     env_file: .env
 volumes:
   nextcloud:
