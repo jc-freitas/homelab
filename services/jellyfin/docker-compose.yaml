@@ -1,17 +1,23 @@
 services:
   jellyfin:
-    image: lscr.io/linuxserver/jellyfin:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: jellyfin-intel:local
     container_name: jellyfin
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=America/Sao_Paulo
-      - DOCKER_MODS=linuxserver/mods:jellyfin-opencl-intel
+      # DOCKER_MODS removed — the Intel OpenCL drivers are baked into the image
+      # (see Dockerfile), so startup no longer reinstalls them every boot.
     volumes:
       - jellyfin:/config
       - /home/deploy/homelab/services/jellyfin/data:/data
       - /srv/media/movies:/movies:ro
       - /srv/media/tv:/tv:ro
+      - /srv/media/moviesiptv:/moviesiptv:ro
+      - /srv/media/tviptv:/tviptv:ro
     ports:
       - "10.0.20.2:8096:8096"
     devices:
