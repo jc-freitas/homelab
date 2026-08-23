@@ -40,22 +40,47 @@ Minha rede é segmentada em VLANs para isolamento e segurança:
 
 ## 🐳 Serviços
 
-Todos os serviços rodam via Docker:
+Todos os serviços rodam via Docker, distribuídos em três hosts:
 
-```bash
-/services
-├── cloudflared     # Tunnel para acesso externo
-├── evolution-api   # API Código Aberto para o WhatsApp
-├── gitea           # Git auto-hospedado
-├── homeassistant   # Automação residencial
-├── immich          # Fotos (Google Photos replacement)
-├── jellyfin        # Servidor de mídia
-├── n8n             # Automação
-├── nextcloud       # Cloud pessoal
-├── rsshub          # Gerador de feeds RSS
-├── trilium         # Notas
-└── vaultwarden     # Gerenciador de senhas
-```
+### Servidor — `10.0.10.3`
+
+| Serviço | Função |
+| --- | --- |
+| `evolution-api` | API Código Aberto para o WhatsApp |
+| `gitea` | Git auto-hospedado |
+| `homeassistant` | Automação residencial |
+| `homebox` | Controle de inventário |
+| `homepage` | Dashboard |
+| `immich` | Fotos (substituto do Google Photos) |
+| `jellyfin` | Servidor de mídia |
+| `monitoring` | Prometheus + Grafana |
+| `n8n` | Automação |
+| `nextcloud` | Cloud pessoal |
+| `redis-shared` | Instância Redis compartilhada |
+| `rsshub` | Gerador de feeds RSS |
+| `searxng` | Metabuscador |
+| `trilium` | Notas |
+
+### Roteador — `10.0.10.1` (OpenWrt)
+
+| Serviço | Função |
+| --- | --- |
+| `caddy` | Proxy reverso — `docker-compose.router.yml` |
+| `cloudflared` | Tunnel para acesso externo — `docker-compose.router.yml` |
+| `vaultwarden` | Gerenciador de senhas |
+
+Ficam no roteador para que o acesso externo e o cofre sobrevivam a um reboot
+do servidor.
+
+### Estação de trabalho
+
+| Serviço | Função |
+| --- | --- |
+| `immich-ml-remote` | Machine learning do Immich, tirado do servidor |
+
+> Scripts de recuperação específicos de cada host, contornos de ordem de boot
+> e relatos de incidente **não** ficam neste repositório — estão num outro,
+> privado.
 
 ---
 

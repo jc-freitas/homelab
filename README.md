@@ -52,22 +52,46 @@ My network is segmented into VLANs for isolation and security:
 
 ## 🐳 Services
 
-All services run via Docker:
+All services run via Docker, split across three hosts:
 
-```bash
-/services
-├── cloudflared     # Tunnel for external access
-├── evolution-api   # Open source WhatsApp API
-├── gitea           # Self-hosted git
-├── homeassistant   # Home automation
-├── immich          # Photos (Google Photos replacement)
-├── jellyfin        # Media server
-├── n8n             # Automation
-├── nextcloud       # Personal cloud
-├── rsshub          # RSS feed generator
-├── trilium         # Notes
-└── vaultwarden     # Password manager
-```
+### Server — `10.0.10.3`
+
+| Service | Purpose |
+| --- | --- |
+| `evolution-api` | Open source WhatsApp API |
+| `gitea` | Self-hosted git |
+| `homeassistant` | Home automation |
+| `homebox` | Inventory tracker |
+| `homepage` | Dashboard |
+| `immich` | Photos (Google Photos replacement) |
+| `jellyfin` | Media server |
+| `monitoring` | Prometheus + Grafana |
+| `n8n` | Automation |
+| `nextcloud` | Personal cloud |
+| `redis-shared` | Shared Redis instance |
+| `rsshub` | RSS feed generator |
+| `searxng` | Metasearch engine |
+| `trilium` | Notes |
+
+### Router — `10.0.10.1` (OpenWrt)
+
+| Service | Purpose |
+| --- | --- |
+| `caddy` | Reverse proxy — `docker-compose.router.yml` |
+| `cloudflared` | Tunnel for external access — `docker-compose.router.yml` |
+| `vaultwarden` | Password manager |
+
+Kept on the router so external access and the vault survive a server reboot.
+
+### Workstation
+
+| Service | Purpose |
+| --- | --- |
+| `immich-ml-remote` | Immich machine learning, offloaded from the server |
+
+> Host-specific recovery scripts, boot-order workarounds and incident
+> write-ups are deliberately **not** in this repo — they live in a separate
+> private one.
 
 ---
 
