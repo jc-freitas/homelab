@@ -1,2 +1,7 @@
 .env
 data/
+.claude/
+
+# Host-specific operational material lives in the private homelab-ops repo:
+# recovery scripts, boot-order workarounds, incident write-ups, and anything
+# naming internal addresses, disk UUIDs or encrypted volumes.

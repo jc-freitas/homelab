@@ -19,6 +19,6 @@ services:
       - NODES_EXCLUDE=[]
     volumes:
       - n8n_data:/home/node/.n8n
-      - /mnt/storage:/storage
+      - /mnt/media-smb:/storage
 volumes:
   n8n_data:
