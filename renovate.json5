@@ -1,0 +1,61 @@
+{
+  // Renovate and not Dependabot: Dependabot matches only the exact name
+  // docker-compose.yml, and it does not speak to Gitea.
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: ["config:recommended"],
+
+  timezone: "America/Sao_Paulo",
+  schedule: ["before 9am on monday"],
+
+  prConcurrentLimit: 5,
+  prHourlyLimit: 2,
+
+  separateMajorMinor: true,
+  separateMultipleMajor: true,
+
+  // In-place edit leftovers on the hosts are not sources of truth.
+  ignorePaths: ["**/*.bak-*", "**/*.removed", "**/*.save", "**/*.disabled"],
+
+  packageRules: [
+    {
+      // A server/ML mismatch does not degrade Immich, it stops it starting.
+      matchPackageNames: [
+        "ghcr.io/immich-app/immich-server",
+        "ghcr.io/immich-app/immich-machine-learning",
+      ],
+      groupName: "immich (server + machine-learning)",
+    },
+    {
+      // A postgres major is a data migration, not a tag bump.
+      matchDatasources: ["docker"],
+      matchPackageNames: ["/postgres/", "/mariadb/", "/redis/"],
+      groupName: "bancos de dados",
+      minimumReleaseAge: "7 days",
+    },
+    {
+      matchUpdateTypes: ["patch"],
+      automerge: true,
+      automergeType: "pr",
+    },
+    {
+      matchUpdateTypes: ["major"],
+      dependencyDashboardApproval: true,
+    },
+    {
+      // Homelab images are often re-tagged or pulled within hours of release.
+      matchDatasources: ["docker"],
+      minimumReleaseAge: "3 days",
+    },
+    {
+      // Overrides the blanket delay: a server older than the installed Bitwarden
+      // app serves an empty vault instead of an error.
+      matchDatasources: ["docker"],
+      matchPackageNames: ["vaultwarden/server"],
+      minimumReleaseAge: "1 day",
+      prPriority: 10,
+    },
+  ],
+
+  dependencyDashboard: true,
+  dependencyDashboardTitle: "Renovate: atualizacoes pendentes",
+}
