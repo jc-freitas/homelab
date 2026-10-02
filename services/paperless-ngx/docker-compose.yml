@@ -1,0 +1,104 @@
+# Paperless-ngx -- OCR paper archive. Documents and the drop zone live on the
+# NAS over CIFS; the Whoosh index and Postgres stay on local disk because both
+# mmap.
+
+services:
+  paperless:
+    image: ghcr.io/paperless-ngx/paperless-ngx:3.2
+    container_name: paperless
+    restart: unless-stopped
+    depends_on:
+      paperless-db:
+        condition: service_healthy
+    environment:
+      - USERMAP_UID=1000
+      - USERMAP_GID=1000
+      - PAPERLESS_TIME_ZONE=America/Sao_Paulo
+      - PAPERLESS_URL=http://paperless.home.arpa
+      - PAPERLESS_SECRET_KEY=${PAPERLESS_SECRET_KEY}
+
+      - PAPERLESS_DBHOST=paperless-db
+      - PAPERLESS_DBNAME=paperless
+      - PAPERLESS_DBUSER=paperless
+      - PAPERLESS_DBPASS=${PAPERLESS_DBPASS}
+      # redis-shared, db 3: the other two are taken by n8n and rsshub
+      - PAPERLESS_REDIS=redis://redis-shared:6379/3
+
+      # The 3.x image ships no Portuguese. PAPERLESS_OCR_LANGUAGES is apt-installed
+      # by an s6 init script at container start, so every recreate needs working
+      # internet -- a plain restart keeps the installed packages.
+      - PAPERLESS_OCR_LANGUAGE=por+eng
+      - PAPERLESS_OCR_LANGUAGES=por eng
+      # auto = skip pages that already carry text, so a re-OCR is cheap
+      - PAPERLESS_OCR_MODE=auto
+      # auto = only write the archive copy when OCR actually adds text
+      - PAPERLESS_ARCHIVE_FILE_GENERATION=auto
+      # Straightens crooked scans -- what you want for paper shot with a phone
+      - PAPERLESS_OCR_DESKEW=true
+      - PAPERLESS_OCR_ROTATE_PAGES=true
+
+      # 4 threads shared with ~40 containers: unthrottled OCR pushes load past 20
+      # and makes the rest of the lab unusable. Two single-threaded workers.
+      - PAPERLESS_TASK_WORKERS=2
+      - PAPERLESS_THREADS_PER_WORKER=1
+      - PAPERLESS_WEBSERVER_WORKERS=2
+
+      # inotify does not work over CIFS, so polling is mandatory. The retry/delay
+      # pair keeps a file still being copied over the wire from being consumed
+      # half-written.
+      - PAPERLESS_CONSUMER_POLLING=60
+      - PAPERLESS_CONSUMER_POLLING_RETRY_COUNT=8
+      - PAPERLESS_CONSUMER_POLLING_DELAY=5
+      - PAPERLESS_CONSUMER_RECURSIVE=true
+      # Turns inbox subfolders into tags: consume/Taxes/2026/ arrives tagged
+      - PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS=true
+      - PAPERLESS_CONSUMER_DELETE_DUPLICATES=true
+
+      # What someone browsing the share directly will see. 3.x wants Jinja
+      # double braces; the old single-brace form is rejected.
+      - PAPERLESS_FILENAME_FORMAT={{ created_year }}/{{ correspondent }}/{{ created }}_{{ title }}
+      - PAPERLESS_FILENAME_FORMAT_REMOVE_NONE=true
+
+      # First start only, to create the superuser. Values live in .env
+      - PAPERLESS_ADMIN_USER=${PAPERLESS_ADMIN_USER}
+      - PAPERLESS_ADMIN_PASSWORD=${PAPERLESS_ADMIN_PASSWORD}
+    volumes:
+      - paperless-data:/usr/src/paperless/data
+      # Originals, archive PDFs, thumbnails and media.lock all land here
+      - /mnt/media-smb/paperless/media:/usr/src/paperless/media
+      - /mnt/media-smb/paperless/consume:/usr/src/paperless/consume
+      # document_exporter target, deliberately outside the media root
+      - /mnt/media-smb/paperless/export:/export
+    ports:
+      # vlan20 only; Caddy publishes paperless.home.arpa -> this port
+      - "10.0.20.2:8010:8000"
+    networks:
+      - default
+      - shared-infra
+
+  paperless-db:
+    image: postgres:17-alpine
+    container_name: paperless-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=paperless
+      - POSTGRES_USER=paperless
+      - POSTGRES_PASSWORD=${PAPERLESS_DBPASS}
+    volumes:
+      - paperless-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U paperless -d paperless"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - default
+
+volumes:
+  paperless-data:
+  paperless-db:
+
+networks:
+  shared-infra:
+    external: true
+    name: shared-infra
