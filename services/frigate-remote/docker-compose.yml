@@ -1,0 +1,28 @@
+# Runs on the PC, not the server: the Pi Zero 2W only encodes and the i5-7200U
+# has no headroom to detect. CPU detector -- the GPU is AMD, and Frigate has no
+# ROCm one.
+#
+# The config bind has to be a local C: path: given a network drive, Docker Desktop
+# mounts an empty directory instead. Not :ro either -- the UI rewrites it to save
+# zones, so UI edits have to be copied back into ./config/config.yml.
+
+services:
+  frigate:
+    container_name: frigate
+    image: ghcr.io/blakeblackshear/frigate:stable
+    restart: unless-stopped
+    shm_size: 256mb
+    env_file:
+      - ${USERPROFILE}\docker-volumes\frigate-remote\.env   # FRIGATE_MQTT_PASSWORD
+    volumes:
+      - ${USERPROFILE}\docker-volumes\frigate-remote\config\config.yml:/config/config.yml
+      - frigate-media:/media/frigate
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "5000:5000"   # web UI / API
+      - "8554:8554"   # go2rtc RTSP restream
+      - "8555:8555/tcp"  # go2rtc WebRTC
+      - "8555:8555/udp"  # go2rtc WebRTC
+
+volumes:
+  frigate-media:

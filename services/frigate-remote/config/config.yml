@@ -1,0 +1,43 @@
+mqtt:
+  enabled: true
+  host: 10.0.20.2
+  port: 1883
+  user: frigate
+  password: "{FRIGATE_MQTT_PASSWORD}"
+
+detectors:
+  cpu1:
+    type: cpu
+
+go2rtc:
+  streams:
+    pi_cam:
+      - tcp://10.0.30.237:8888?video=h264
+
+cameras:
+  pi_cam:
+    ffmpeg:
+      inputs:
+        - path: rtsp://127.0.0.1:8554/pi_cam
+          roles:
+            - detect
+            - record
+    detect:
+      enabled: true
+      width: 1280
+      height: 720
+      fps: 5
+    motion:
+      threshold: 25
+    record:
+      enabled: true
+      continuous:
+        days: 0
+      motion:
+        days: 3
+      alerts:
+        retain:
+          days: 14
+      detections:
+        retain:
+          days: 14
