@@ -18,6 +18,7 @@ services:
       - /srv/media/tv:/tv:ro
       - /srv/media/moviesiptv:/moviesiptv:ro
       - /srv/media/tviptv:/tviptv:ro
+      - /srv/media/youtube:/youtube:ro
     ports:
       - "10.0.20.2:8096:8096"
     devices:
