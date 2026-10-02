@@ -1,7 +1,25 @@
+# Secrets
 .env
-data/
-.claude/
+*.env
+.env.*
+*.env.bak-*
+!.env.example
+!*.env.example
 
-# Host-specific operational material lives in the private homelab-ops repo:
-# recovery scripts, boot-order workarounds, incident write-ups, and anything
-# naming internal addresses, disk UUIDs or encrypted volumes.
+# In-place edit leftovers
+*.bak
+*.bak-*
+*.save
+*.removed
+*.disabled.bak
+
+# Service runtime state
+data/
+config/*.db
+config/*.db-shm
+config/*.db-wal
+
+# Tooling scratch
+.claude/
+.playwright-mcp/
+node_modules/
