@@ -22,6 +22,17 @@ services:
       - nextcloud:/var/www/html
       - /mnt/nextcloud-smb:/var/www/html/data
     env_file: .env
+    networks:
+      - default
+      - shared-infra
 volumes:
   nextcloud:
   db:
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.16.13.0/24
+  shared-infra:
+    external: true
+    name: shared-infra
