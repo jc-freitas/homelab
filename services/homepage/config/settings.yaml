@@ -11,6 +11,12 @@ layout:
   media:
     style: row
     columns: 4
+  books:
+    style: row
+    columns: 3
   home:
     style: row
     columns: 4
+  projects:
+    style: row
+    columns: 3
