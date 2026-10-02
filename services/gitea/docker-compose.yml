@@ -2,6 +2,12 @@ networks:
   gitea:
     external: false
 
+volumes:
+  # Holds the runner's registration (.runner); created by hand before this
+  # service was written down, so it is referenced as-is instead of recreated.
+  gitea-runner-data:
+    external: true
+
 services:
   server:
     image: docker.gitea.com/gitea:latest
@@ -19,3 +25,18 @@ services:
     ports:
       - "10.0.20.2:3022:3000"
       - "222:22"
+
+  runner:
+    image: gitea/act_runner:latest
+    container_name: gitea-runner
+    restart: unless-stopped
+    environment:
+      - GITEA_INSTANCE_URL=http://10.0.20.2:3022
+      - GITEA_RUNNER_LABELS=docker
+    volumes:
+      - gitea-runner-data:/data
+      # Job steps run inside this container, so a deploy target it writes to
+      # directly has to be mounted here (tgbot). Stacks that only need host
+      # files read them through the socket instead - see curadoria's workflow.
+      - /opt/tgbot:/opt/tgbot
+      - /var/run/docker.sock:/var/run/docker.sock
