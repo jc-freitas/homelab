@@ -3,7 +3,7 @@ services:
         # two ways to enable puppeteer:
         # * comment out marked lines, then use this image instead: diygod/rsshub:chromium-bundled
         # * (consumes more disk space and memory) leave everything unchanged
-        image: diygod/rsshub # or ghcr.io/diygod/rsshub
+        image: diygod/rsshub:2026-10-01 # or ghcr.io/diygod/rsshub
         restart: always
         ports:
             - '1200:1200'
@@ -26,7 +26,7 @@ services:
             - browserless # marked
 
     browserless: # marked
-        image: browserless/chrome # marked
+        image: browserless/chrome:1.61.1-chrome-stable # marked
         restart: always # marked
         ulimits: # marked
             core: # marked
@@ -39,7 +39,7 @@ services:
             retries: 3 # marked
 
     redis:
-        image: redis:alpine
+        image: redis:8.10.2-alpine
         restart: always
         volumes:
             - redis-data:/data

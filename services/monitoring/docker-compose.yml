@@ -1,6 +1,6 @@
 services:
   node-exporter:
-    image: prom/node-exporter:latest
+    image: prom/node-exporter:v1.12.1
     container_name: node-exporter
     restart: unless-stopped
     pid: host
@@ -8,9 +8,8 @@ services:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
-      # Lets host-side cron jobs publish metrics by dropping *.prom files here,
-      # instead of each one needing its own exporter and port. The security
-      # scans (image CVEs, external WAN port scan, Lynis) report this way.
+      # Textfile collector: host-side cron jobs publish metrics by dropping
+      # *.prom files here instead of each needing its own exporter and port.
       - /var/lib/node_exporter/textfile_collector:/textfile:ro
     command:
       - '--path.procfs=/host/proc'
@@ -22,7 +21,7 @@ services:
       - monitoring
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:latest
+    image: gcr.io/cadvisor/cadvisor:v0.55.1
     container_name: cadvisor
     restart: unless-stopped
     privileged: true
@@ -44,7 +43,7 @@ services:
       - monitoring
 
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v3.15.0
     container_name: prometheus
     restart: unless-stopped
     volumes:
@@ -61,7 +60,7 @@ services:
       - monitoring
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:13.2.3
     container_name: grafana
     restart: unless-stopped
     environment:

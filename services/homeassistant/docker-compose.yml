@@ -1,7 +1,7 @@
 services:
   homeassistant:
     container_name: homeassistant
-    image: homeassistant/home-assistant
+    image: homeassistant/home-assistant:2026.9.4
     volumes:
       - home-assistant:/config
       - /etc/localtime:/etc/localtime:ro
@@ -14,7 +14,7 @@ services:
       - NET_RAW
   node-red:
     container_name: nodered
-    image: nodered/node-red:latest
+    image: nodered/node-red:4.1.12
     restart: unless-stopped
     environment:
       - TZ=America/Los_Angeles
@@ -25,7 +25,7 @@ services:
 
   mosquitto:
     container_name: mosquitto
-    image: eclipse-mosquitto:latest
+    image: eclipse-mosquitto:2.0.22
     restart: unless-stopped
     ports:
       - "1883:1883"

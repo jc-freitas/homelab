@@ -1,6 +1,6 @@
 services:
   trilium:
-    image: triliumnext/trilium:latest
+    image: triliumnext/trilium:v0.106.0
     restart: unless-stopped
     environment:
       - TRILIUM_DATA_DIR=/home/node/trilium-data

@@ -1,7 +1,7 @@
 services:
   api:
     container_name: evolution_api
-    image: evoapicloud/evolution-api:latest
+    image: evoapicloud/evolution-api:2.3.7
     restart: always
     depends_on:
       - evolution-postgres
@@ -18,7 +18,7 @@ services:
 
   frontend:
     container_name: evolution_frontend
-    image: evoapicloud/evolution-manager:latest
+    image: evoapicloud/evolution-manager:2.3.5
     entrypoint: /bin/sh
     command: >
       -c "
@@ -36,7 +36,7 @@ services:
 
   evolution-postgres:
     container_name: evolution_postgres
-    image: postgres:15
+    image: postgres:15.19
     restart: always
     command:
       - postgres

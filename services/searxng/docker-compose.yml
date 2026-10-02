@@ -1,6 +1,6 @@
 services:
   searxng:
-    image: docker.io/searxng/searxng:latest
+    image: docker.io/searxng/searxng:2026.10.2-19ffbcd30
     container_name: searxng
     restart: unless-stopped
     environment:
