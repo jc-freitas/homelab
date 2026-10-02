@@ -9,6 +9,8 @@
 
 services:
   gatus:
+    # Unpinned on purpose: latest is ahead of every version tag, so the digest
+    # running here answers to no release. Pinning would be an upgrade.
     image: twinproduction/gatus:latest
     container_name: gatus
     restart: unless-stopped
