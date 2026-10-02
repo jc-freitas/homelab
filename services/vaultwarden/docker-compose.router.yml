@@ -1,0 +1,32 @@
+# Vaultwarden runs ON THE ROUTER, not the server: it is the only always-on
+# device, so the vault stays reachable when the server is down -- which is
+# exactly when you need a password.
+#
+#   dir:  /opt/docker-usb/vaultwarden/
+#   run:  docker compose -f docker-compose.router.yml up -d
+#
+# Pinned on purpose, and kept current on purpose: a server too old for the
+# installed Bitwarden app returns an EMPTY vault rather than an error. Let
+# Renovate bump it; do not let it drift.
+services:
+  vaultwarden:
+    image: vaultwarden/server:1.37.1
+    container_name: vaultwarden
+    restart: unless-stopped
+    environment:
+      DATA_FOLDER: /data
+      DATABASE_MAX_CONNS: 10
+      WEB_VAULT_ENABLED: "true"
+      DOMAIN: ${DOMAIN}
+      ADMIN_TOKEN: ${ADMIN_TOKEN}
+    volumes:
+      - /opt/docker-usb/vaultwarden/data:/data
+    ports:
+      - "${BIND_ADDR}:8084:80"
+    networks:
+      - apps
+
+# Created outside compose, shared with the router's other containers
+networks:
+  apps:
+    external: true
