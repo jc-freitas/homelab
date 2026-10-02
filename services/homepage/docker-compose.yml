@@ -4,7 +4,7 @@ services:
     container_name: homepage
     restart: unless-stopped
     environment:
-      - HOMEPAGE_ALLOWED_HOSTS=10.0.20.2:3005
+      - HOMEPAGE_ALLOWED_HOSTS=10.0.20.2:3005,homepage.home.arpa
     env_file: .env
     ports:
       - "10.0.20.2:3005:3000"

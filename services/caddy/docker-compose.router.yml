@@ -1,5 +1,5 @@
 # Caddy runs ON THE ROUTER (OpenWrt, aarch64) as the LAN/Tailscale reverse
-# proxy for *.local service hostnames — keeps proxy load off the server's
+# proxy for *.home.arpa service hostnames — keeps proxy load off the server's
 # i5-7200U. LuCI's uhttpd was restricted to the management VLAN (10.0.1.1)
 # to free port 80/443 here.
 #
