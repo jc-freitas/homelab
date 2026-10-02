@@ -3,13 +3,13 @@
 # i5-7200U. LuCI's uhttpd was restricted to the management VLAN (10.0.1.1)
 # to free port 80/443 here.
 #
-# Deployed on the router's USB Docker (see openwrt-router-25125-stable memory):
+# Deployed on the router's USB Docker (docker.img on the pendrive, by UUID):
 #   dir:  /opt/docker-usb/caddy/
 #   run:  docker compose -f docker-compose.router.yml up -d
 #
 # Uses host networking so it can bind port 80 on the services VLAN
 # (10.0.20.1) and reach on-server origins at 10.0.20.2, plus the router's
-# own gatus container via 127.0.0.1:8083.
+# own gatus container via 127.0.0.1:8087.
 services:
   caddy:
     image: caddy:2-alpine
