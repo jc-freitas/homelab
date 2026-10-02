@@ -1,0 +1,91 @@
+name: deploy
+
+# Never on pull_request: a self-hosted runner on a public repo would execute a
+# stranger's branch on the server.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'services/**'
+  workflow_dispatch:
+    inputs:
+      services:
+        description: 'Service names to bring up, space separated, or "all"'
+        required: true
+        default: all
+
+concurrency:
+  group: homelab-deploy
+  cancel-in-progress: false
+
+env:
+  TARGET: /home/deploy/homelab
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, linux, homelab]
+    steps:
+      - name: Check the target is a clone
+        run: |
+          git -C "$TARGET" rev-parse --git-dir >/dev/null 2>&1 || {
+            echo "$TARGET is not a git clone -- refusing to touch it." >&2
+            echo "Untracked state lives here: jellyfin/data, homebox/data, matter-hub keys." >&2
+            exit 1
+          }
+          git -C "$TARGET" diff --quiet || {
+            echo "$TARGET has uncommitted local changes:" >&2
+            git -C "$TARGET" status --short >&2
+            exit 1
+          }
+
+      - name: Pull
+        id: pull
+        run: |
+          before=$(git -C "$TARGET" rev-parse HEAD)
+          git -C "$TARGET" pull --ff-only
+          after=$(git -C "$TARGET" rev-parse HEAD)
+          echo "before=$before" >> "$GITHUB_OUTPUT"
+          echo "after=$after" >> "$GITHUB_OUTPUT"
+
+      - name: Work out what changed
+        run: |
+          if [ "${{ github.event_name }}" = workflow_dispatch ]; then
+            if [ "${{ inputs.services }}" = all ]; then
+              list=$(cd "$TARGET/services" && ls -d */ | tr -d /)
+            else
+              list="${{ inputs.services }}"
+            fi
+          else
+            # The clone's own HEAD before and after the pull, not the push
+            # event's range, which would miss pushes the server was behind by.
+            list=$(git -C "$TARGET" diff --name-only \
+                     "${{ steps.pull.outputs.before }}" \
+                     "${{ steps.pull.outputs.after }}" -- services/ \
+                   | cut -d/ -f2 | sort -u)
+          fi
+          echo "$list" | tr ' ' '\n' | grep -v '^$' | tr '\n' ' ' > "$RUNNER_TEMP/deploy-list"
+          echo "changed: $(cat "$RUNNER_TEMP/deploy-list")"
+
+      - name: Bring up only those services
+        run: |
+          rc=0
+          for s in $(cat "$RUNNER_TEMP/deploy-list"); do
+            d="$TARGET/services/$s"
+            # Default names only. A *.router.yml started here would publish a
+            # second vaultwarden against a data path this host does not have.
+            f=""
+            for cand in docker-compose.yml docker-compose.yaml; do
+              [ -f "$d/$cand" ] && f="$d/$cand" && break
+            done
+            if [ -z "$f" ]; then
+              echo "skip $s: no docker-compose.yml or .yaml"
+              continue
+            fi
+            echo "::group::$s"
+            # No --remove-orphans: containers started outside compose share these
+            # project names, and it would delete them.
+            docker compose -f "$f" up -d || rc=1
+            echo "::endgroup::"
+          done
+          exit "$rc"
