@@ -1,0 +1,35 @@
+# Gatus runs ON THE ROUTER so it keeps reporting when the server is the thing
+# that is down. Same USB Docker pattern as services/caddy:
+#   dir:  /opt/docker-usb/gatus/
+#   run:  docker compose -f docker-compose.router.yml up -d
+#
+# Published on loopback only; Caddy serves it as gatus.home.arpa. Port 8087 and
+# not 8083: a deleted container left a ghost endpoint in dockerd's network store
+# that re-spawns a docker-proxy on 0.0.0.0:8083 at every daemon start.
+
+services:
+  gatus:
+    image: twinproduction/gatus:latest
+    container_name: gatus
+    restart: unless-stopped
+    # Alerting secrets: config.yaml is versioned, this file is not
+    env_file:
+      - /opt/docker-usb/gatus/.env
+    environment:
+      - GATUS_LOG_LEVEL=INFO
+      - PORT=8080
+    volumes:
+      - /opt/docker-usb/gatus:/config
+      - /opt/docker-usb/gatus/data:/data
+      # Distroless image, no tzdata on the router: Go reads /etc/localtime when
+      # TZ is unset, so this file is what makes alert times read as GMT-3.
+      # No TZ variable on purpose -- it would look for a zoneinfo db that is
+      # not here.
+      - /opt/docker-usb/gatus/localtime:/etc/localtime:ro
+    ports:
+      - "127.0.0.1:8087:8080"
+
+networks:
+  default:
+    name: apps
+    external: true
