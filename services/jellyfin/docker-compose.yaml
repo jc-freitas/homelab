@@ -9,8 +9,7 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=America/Sao_Paulo
-      # DOCKER_MODS removed — the Intel OpenCL drivers are baked into the image
-      # (see Dockerfile), so startup no longer reinstalls them every boot.
+      # No DOCKER_MODS: the Intel OpenCL drivers are baked into the image.
     volumes:
       - jellyfin:/config
       - /home/deploy/homelab/services/jellyfin/data:/data

@@ -1,21 +1,16 @@
-# Custom Jellyfin image that BAKES IN the linuxserver "jellyfin-opencl-intel"
-# mod (Intel compute-runtime OpenCL .deb packages + clinfo) at build time
-# instead of installing them on every container start via DOCKER_MODS.
+# The Intel OpenCL mod is baked in instead of run through DOCKER_MODS, which
+# does `dpkg -i` of these debs on every container start: ~8 minutes. The flaky
+# USB NIC force-recreates this container on every flap, so that became a
+# recurring outage. Cold start is ~30s now.
 #
-# Why: the LSIO mod runs `dpkg -i` of the Intel OpenCL debs on EVERY start,
-# which takes ~8 minutes. The flaky USB NIC force-recreates this container on
-# every flap (see /etc/network/interfaces), so that 8 min became a recurring
-# outage. Baking the debs in cuts cold-start to ~30 s. Functionally identical
-# to the mod (same debs, same clinfo) — QSV/VAAPI + OpenCL tone-mapping intact.
-#
-# Rebuild when bumping the base image or to pick up newer Intel drivers:
-#   docker compose build --pull && docker compose up -d
+# Rolling tag with no published versions, so there is nothing to pin: the Intel
+# drivers can change under a rebuild, which makes rebuilding a deliberate act.
 FROM linuxserver/mods:jellyfin-opencl-intel AS mod
 
-FROM lscr.io/linuxserver/jellyfin:latest
+# Pinned to the version this image was built from. A version jump is what left
+# the server stuck on an Intro Skipper migration lock for a whole startup.
+FROM lscr.io/linuxserver/jellyfin:10.11.11ubu2404-ls41
 
-# The mod image carries the pre-downloaded Intel compute-runtime debs at these
-# paths (see the mod's Dockerfile). Install them once, here, at build time.
 COPY --from=mod /opencl-intel-legacy1 /tmp/opencl-intel-legacy1
 COPY --from=mod /opencl-intel /tmp/opencl-intel
 RUN set -e; \
