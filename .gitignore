@@ -13,6 +13,12 @@
 *.removed
 *.disabled.bak
 
+# Live configs that list the whole lab -- they live in the private ops repo
+services/caddy/Caddyfile
+services/gatus/config.yaml
+services/homepage/config/services.yaml
+services/monitoring/prometheus/prometheus.yml
+
 # Service runtime state
 data/
 config/*.db

@@ -54,6 +54,9 @@ My network is segmented into VLANs for isolation and security:
 
 All services run via Docker, split across three hosts:
 
+Caddy, Gatus, Homepage and Prometheus ship a `.example` config. The live ones list
+services defined in other repos, so they are kept private alongside the host material.
+
 ### Server — `10.0.10.3`
 
 | Service | Purpose |

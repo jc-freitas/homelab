@@ -1,0 +1,107 @@
+{
+	auto_https off
+}
+
+# Only the services defined in this repo are mapped here. The live Caddyfile
+# is in the private ops repo: it lists every host on the network, public or not.
+#
+# Explicit listen addresses: 10.0.1.1 is left out because LuCI/uhttpd has the
+# management VLAN. The Tailscale IP is here so *.home.arpa also works remotely.
+(lan) {
+	bind 10.0.10.1 10.0.20.1 10.0.30.1 10.0.40.1 TAILSCALE_IP
+}
+
+http://searxng.home.arpa {
+	import lan
+	reverse_proxy 10.0.20.2:8888
+}
+
+http://homepage.home.arpa {
+	import lan
+	reverse_proxy 10.0.20.2:3005
+}
+
+http://nextcloud.home.arpa {
+	import lan
+	reverse_proxy 10.0.20.2:8337
+}
+
+http://grafana.home.arpa {
+	import lan
+	reverse_proxy 10.0.20.2:3002
+}
+
+http://homebox.home.arpa {
+	import lan
+	reverse_proxy 10.0.20.2:7745
+}
+
+http://jellyfin.home.arpa {
+	import lan
+	reverse_proxy 10.0.20.2:8096
+}
+
+http://immich.home.arpa {
+	import lan
+	reverse_proxy 10.0.20.2:2283
+}
+
+http://vaultwarden.home.arpa {
+	import lan
+	reverse_proxy 10.0.20.1:8084
+}
+
+http://gitea.home.arpa {
+	import lan
+	reverse_proxy 10.0.20.2:3022
+}
+
+http://nodered.home.arpa {
+	import lan
+	reverse_proxy 10.0.20.2:1880
+}
+
+http://evolution.home.arpa {
+	import lan
+	reverse_proxy 10.0.20.2:8080
+}
+
+http://evolution-ui.home.arpa {
+	import lan
+	reverse_proxy 10.0.20.2:3000
+}
+
+http://rsshub.home.arpa {
+	import lan
+	reverse_proxy 10.0.20.2:1200
+}
+
+http://trilium.home.arpa {
+	import lan
+	reverse_proxy 10.0.20.2:8181
+}
+
+http://n8n.home.arpa {
+	import lan
+	reverse_proxy 10.0.20.2:5678
+}
+
+http://homeassistant.home.arpa {
+	import lan
+	reverse_proxy 10.0.20.2:8123
+}
+
+http://gatus.home.arpa {
+	import lan
+	reverse_proxy 127.0.0.1:8087
+}
+
+http://frigate.home.arpa {
+	import lan
+	reverse_proxy 10.0.30.135:5000
+}
+
+http://paperless.home.arpa {
+	import lan
+	reverse_proxy 10.0.20.2:8010
+}

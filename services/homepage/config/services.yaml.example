@@ -1,0 +1,93 @@
+# Only the services defined in this repo are listed here. The live config is in
+# the private ops repo, where the rest of the dashboard lives.
+- core:
+    - Grafana:
+        href: http://10.0.20.2:3002
+        icon: grafana.png
+        description: Metrics dashboard
+
+- apps:
+    - Vaultwarden:
+        href: https://vault.example.com
+        icon: vaultwarden.png
+        description: Password manager
+    - Immich:
+        href: http://10.0.20.2:2283
+        icon: immich.png
+        description: Photo backup
+        widget:
+          type: immich
+          url: http://10.0.20.2:2283
+          key: "{{HOMEPAGE_VAR_IMMICH_KEY}}"
+          version: 2
+          fields: ["photos", "videos", "storage"]
+    - Nextcloud:
+        href: http://10.0.20.2:8337
+        icon: nextcloud.png
+        description: Files / cloud storage
+        widget:
+          type: nextcloud
+          url: http://10.0.20.2:8337
+          key: "{{HOMEPAGE_VAR_NEXTCLOUD_KEY}}"
+          fields: ["freespace", "activeusers", "numfiles", "numshares"]
+    - Gitea:
+        href: http://10.0.20.2:3022
+        icon: gitea.png
+        description: Git hosting
+        widget:
+          type: gitea
+          url: http://10.0.20.2:3022
+          key: "{{HOMEPAGE_VAR_GITEA_KEY}}"
+          fields: ["repositories", "notifications", "issues", "pulls"]
+    - Trilium:
+        href: http://10.0.20.2:8181
+        icon: trilium.png
+        description: Notes
+    - n8n:
+        href: http://10.0.20.2:5678
+        icon: n8n.png
+        description: Automation
+    - Homebox:
+        href: http://10.0.20.2:7745
+        icon: homebox.png
+        description: Inventory tracker
+    - Evolution API:
+        href: http://10.0.20.2:8080
+        icon: whatsapp.png
+        description: WhatsApp API
+    - Paperless:
+        href: http://10.0.20.2:8010
+        icon: paperless-ngx.png
+        description: Document OCR archive
+
+- media:
+    - Jellyfin:
+        href: http://10.0.20.2:8096
+        icon: jellyfin.png
+        description: Media server
+        widget:
+          type: jellyfin
+          url: http://10.0.20.2:8096
+          key: "{{HOMEPAGE_VAR_JELLYFIN_KEY}}"
+          version: 2
+          enableBlocks: true
+          enableNowPlaying: true
+
+- home:
+    - Home Assistant:
+        href: http://10.0.20.2:8123
+        icon: home-assistant.png
+        description: Home automation
+        widget:
+          type: homeassistant
+          url: http://10.0.20.2:8123
+          key: "{{HOMEPAGE_VAR_HOMEASSISTANT_KEY}}"
+          fields: ["people_home", "lights_on", "switches_on"]
+    - Node-RED:
+        href: http://10.0.20.2:1880
+        icon: node-red.png
+        description: Automation flows
+    - Frigate:
+        href: http://10.0.30.135:5000
+        icon: frigate.png
+        description: Camera NVR / motion detection

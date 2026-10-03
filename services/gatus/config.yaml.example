@@ -1,0 +1,292 @@
+# Only the services defined in this repo are watched here. The live config is
+# in the private ops repo: it also checks the hosts, the SMB share and the DNS.
+storage:
+  type: sqlite
+  path: /data/data.db
+  # The default 100 only holds 8h of a 5m endpoint.
+  maximum-number-of-results: 300
+  maximum-number-of-events: 100
+
+web:
+  port: 8080
+
+ui:
+  title: Homelab Status
+  header: Homelab Status
+
+alerting:
+  custom:
+    # The last path segment is the Evolution instance name.
+    url: "http://10.0.20.2:8080/message/sendText/ngReborn"
+    method: "POST"
+    headers:
+      Content-Type: "application/json"
+      apikey: "${EVOLUTION_API_KEY}"
+    # A condition carrying a double quote of its own would void this JSON body.
+    body: '{"number":"${ALERT_WHATSAPP_TO}","text":"*[ALERT_TRIGGERED_OR_RESOLVED]* [ENDPOINT_GROUP]/[ENDPOINT_NAME]\n[ENDPOINT_URL]\n[RESULT_CONDITIONS]\n[RESULT_ERRORS]"}'
+    placeholders:
+      ALERT_TRIGGERED_OR_RESOLVED:
+        TRIGGERED: "CAIU"
+        RESOLVED: "VOLTOU"
+    client:
+      timeout: 15s
+    default-alert:
+      enabled: true
+      failure-threshold: 3
+      success-threshold: 2
+      send-on-resolved: true
+      minimum-reminder-interval: 2h
+
+  # Not a spare: the provider above leaves through the server it watches, this one
+  # over the WAN, which is why every endpoint carries both.
+  telegram:
+    token: "${TELEGRAM_BOT_TOKEN}"
+    id: "${TELEGRAM_CHAT_ID}"
+    default-alert:
+      enabled: true
+      failure-threshold: 3
+      success-threshold: 2
+      send-on-resolved: true
+      minimum-reminder-interval: 2h
+
+endpoints:
+  - name: grafana
+    group: core
+    url: "http://10.0.20.2:3002/api/health"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: custom
+      - type: telegram
+
+  - name: homepage
+    group: core
+    url: "http://10.0.20.2:3005/"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: custom
+      - type: telegram
+
+  - name: vaultwarden
+    group: apps
+    url: "http://vaultwarden/alive"
+    interval: 2m
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: custom
+      - type: telegram
+
+  - name: vaultwarden-external
+    group: apps
+    url: "https://vault.example.com/alive"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+      # Cloudflare renews this, so it only trips if something else terminates TLS.
+      - "[CERTIFICATE_EXPIRATION] > 336h"
+    alerts:
+      - type: custom
+      - type: telegram
+
+  - name: immich
+    group: apps
+    url: "http://10.0.20.2:2283/api/server/ping"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: custom
+      - type: telegram
+
+  # Immich answers with its ML dead, so the ML needs a check of its own.
+  - name: immich-ml
+    group: apps
+    url: "http://10.0.30.135:3003/ping"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY] == pong"
+    alerts:
+      - type: custom
+      - type: telegram
+
+  - name: frigate
+    group: apps
+    url: "http://10.0.30.135:5000/api/version"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: custom
+      - type: telegram
+
+  - name: jellyfin
+    group: apps
+    url: "http://10.0.20.2:8096/health"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: custom
+      - type: telegram
+
+  - name: gitea
+    group: apps
+    url: "http://10.0.20.2:3022/api/healthz"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: custom
+      - type: telegram
+
+  - name: trilium
+    group: apps
+    url: "http://10.0.20.2:8181"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: custom
+      - type: telegram
+
+  - name: n8n
+    group: apps
+    url: "http://10.0.20.2:5678"
+    interval: 5m
+    conditions:
+      - "[STATUS] < 400"
+    alerts:
+      - type: custom
+      - type: telegram
+
+  - name: rsshub
+    group: apps
+    url: "http://10.0.20.2:1200/healthz"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: custom
+      - type: telegram
+
+  - name: evolution-api
+    group: apps
+    url: "http://10.0.20.2:8080"
+    interval: 5m
+    conditions:
+      - "[STATUS] < 400"
+    alerts:
+      - type: custom
+      - type: telegram
+
+  - name: nextcloud
+    group: apps
+    url: "http://10.0.20.2:8337/status.php"
+    interval: 5m
+    client:
+      timeout: 20s
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: custom
+      - type: telegram
+
+  - name: homebox
+    group: apps
+    url: "http://10.0.20.2:7745/"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: custom
+      - type: telegram
+
+  - name: home-assistant
+    group: home
+    url: "http://10.0.20.2:8123"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: custom
+      - type: telegram
+
+  - name: node-red
+    group: home
+    url: "http://10.0.20.2:1880"
+    interval: 5m
+    conditions:
+      - "[STATUS] < 400"
+    alerts:
+      - type: custom
+      - type: telegram
+
+  - name: mosquitto
+    group: home
+    url: "tcp://10.0.20.2:1883"
+    interval: 5m
+    conditions:
+      - "[CONNECTED] == true"
+    alerts:
+      - type: custom
+      - type: telegram
+
+  - name: matter-hub
+    group: home
+    url: "http://10.0.20.2:8482/api/health/live"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: custom
+      - type: telegram
+
+  # The only check that goes through Caddy; every other one hits a backend direct.
+  - name: caddy
+    group: core
+    url: "http://homepage.home.arpa/"
+    interval: 2m
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: custom
+      - type: telegram
+
+  - name: searxng
+    group: apps
+    url: "http://10.0.20.2:8888/healthz"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: custom
+      - type: telegram
+
+  # Both are slow starters and flap on boot, hence the long leash on this pair.
+  - name: paperless
+    group: apps
+    url: "http://10.0.20.2:8010/"
+    interval: 5m
+    client:
+      timeout: 20s
+    conditions:
+      - "[STATUS] < 400"
+    alerts:
+      - type: custom
+      - type: telegram
+        failure-threshold: 8
+
+  - name: evolution-manager
+    group: apps
+    url: "http://10.0.20.2:3000/"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: custom
+      - type: telegram
