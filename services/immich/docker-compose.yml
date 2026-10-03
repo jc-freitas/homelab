@@ -6,7 +6,10 @@ services:
     devices:
       - /dev/dri:/dev/dri
     volumes:
-      - /mnt/storage-smb/docker-nfs/immich:/data
+      # Not the CIFS share: one mount option (retrans=5) kept Immich down for 7
+      # hours there, and restic skipped 216 files without failing. The NAS holds
+      # the copy, not the live library.
+      - /srv/immich:/data
       - /etc/localtime:/etc/localtime:ro
     ports:
       - '10.0.20.2:2283:2283'
@@ -19,33 +22,14 @@ services:
       - UPLOAD_LOCATION=/data
       - REDIS_HOSTNAME=redis-shared
       - REDIS_DBINDEX=2
-      # ML offloaded to the Windows PC (services/immich-ml-remote) — the
-      # i5-7200U can't afford the ~40% CPU / 3GB RAM the local ML costs.
+      # On the PC (services/immich-ml-remote): the i5-7200U cannot afford the
+      # ~40% CPU and 3GB the local ML costs.
       - IMMICH_MACHINE_LEARNING_URL=http://10.0.30.135:3003
     env_file:
       - .env
     networks:
       - default
       - shared-infra
-
-  # immich-machine-learning moved to the Windows PC (10.0.30.135:3003).
-  # See services/immich-ml-remote/docker-compose.yml. Keep this commented so
-  # a redeploy doesn't resurrect it on the server.
-  # immich-machine-learning:
-  #   container_name: immich_machine_learning
-  #   devices:
-  #     - /dev/dri:/dev/dri
-  #   group_add:
-  #     - 44   # video
-  #     - 992  # render
-  #   image: ghcr.io/immich-app/immich-machine-learning:v3.2.2-openvino
-  #   volumes:
-  #     - model-cache:/cache
-  #   restart: always
-  #   healthcheck:
-  #     disable: false
-  #   env_file:
-  #     - .env
 
   database:
     container_name: immich_postgres
@@ -77,7 +61,6 @@ services:
       - monitoring
 
 volumes:
-  model-cache:
   immich_db:
 
 networks:
