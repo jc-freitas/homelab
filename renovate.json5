@@ -54,6 +54,15 @@
       minimumReleaseAge: "1 day",
       prPriority: 10,
     },
+    {
+      // Bumps a FROM, which does nothing until somebody rebuilds, so it must
+      // never merge itself.
+      matchDatasources: ["docker"],
+      matchPackageNames: ["lscr.io/linuxserver/jellyfin"],
+      automerge: false,
+      dependencyDashboardApproval: true,
+      minimumReleaseAge: "14 days",
+    },
   ],
 
   dependencyDashboard: true,
