@@ -71,6 +71,7 @@ services defined in other repos, so they are kept private alongside the host mat
 | `monitoring` | Prometheus + Grafana |
 | `n8n` | Automation |
 | `nextcloud` | Personal cloud |
+| `paperless-ngx` | Document scanning and OCR |
 | `redis-shared` | Shared Redis instance |
 | `rsshub` | RSS feed generator |
 | `searxng` | Metasearch engine |
@@ -82,6 +83,7 @@ services defined in other repos, so they are kept private alongside the host mat
 | --- | --- |
 | `caddy` | Reverse proxy — `docker-compose.router.yml` |
 | `cloudflared` | Tunnel for external access — `docker-compose.router.yml` |
+| `gatus` | Uptime monitoring — `docker-compose.router.yml` |
 | `vaultwarden` | Password manager |
 
 Kept on the router so external access and the vault survive a server reboot.
@@ -90,6 +92,7 @@ Kept on the router so external access and the vault survive a server reboot.
 
 | Service | Purpose |
 | --- | --- |
+| `frigate-remote` | NVR for the camera, kept off the server |
 | `immich-ml-remote` | Immich machine learning, offloaded from the server |
 
 > Host-specific recovery scripts, boot-order workarounds and incident

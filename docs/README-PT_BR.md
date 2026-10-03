@@ -56,6 +56,7 @@ Todos os serviços rodam via Docker, distribuídos em três hosts:
 | `monitoring` | Prometheus + Grafana |
 | `n8n` | Automação |
 | `nextcloud` | Cloud pessoal |
+| `paperless-ngx` | Digitalização e OCR de documentos |
 | `redis-shared` | Instância Redis compartilhada |
 | `rsshub` | Gerador de feeds RSS |
 | `searxng` | Metabuscador |
@@ -67,6 +68,7 @@ Todos os serviços rodam via Docker, distribuídos em três hosts:
 | --- | --- |
 | `caddy` | Proxy reverso — `docker-compose.router.yml` |
 | `cloudflared` | Tunnel para acesso externo — `docker-compose.router.yml` |
+| `gatus` | Monitoramento de disponibilidade — `docker-compose.router.yml` |
 | `vaultwarden` | Gerenciador de senhas |
 
 Ficam no roteador para que o acesso externo e o cofre sobrevivam a um reboot
@@ -76,6 +78,7 @@ do servidor.
 
 | Serviço | Função |
 | --- | --- |
+| `frigate-remote` | NVR da câmera, fora do servidor |
 | `immich-ml-remote` | Machine learning do Immich, tirado do servidor |
 
 > Scripts de recuperação específicos de cada host, contornos de ordem de boot
