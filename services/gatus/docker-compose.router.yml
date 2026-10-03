@@ -11,7 +11,7 @@ services:
   gatus:
     # Unpinned on purpose: latest is ahead of every version tag, so the digest
     # running here answers to no release. Pinning would be an upgrade.
-    image: twinproduction/gatus:latest
+    image: twinproduction/gatus:v5.37.0
     container_name: gatus
     restart: unless-stopped
     # Alerting secrets: config.yaml is versioned, this file is not
