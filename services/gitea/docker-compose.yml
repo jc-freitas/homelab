@@ -37,5 +37,5 @@ services:
       - gitea-runner-data:/data
       # Job steps run inside this container, so a deploy target it writes to has
       # to be mounted here; the rest is reached through the socket.
-      - /opt/tgbot:/opt/tgbot
+      - ${TGBOT_DIR:-/opt/tgbot}:/opt/tgbot
       - /var/run/docker.sock:/var/run/docker.sock
