@@ -19,6 +19,9 @@ services/gatus/config.yaml
 services/homepage/config/services.yaml
 services/monitoring/prometheus/prometheus.yml
 
+# Carries a secret_key of its own, so it stays out even of the private repo
+services/searxng/config/settings.yml
+
 # Service runtime state
 data/
 config/*.db
