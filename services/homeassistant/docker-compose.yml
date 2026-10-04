@@ -36,6 +36,8 @@ services:
 
   intelbras-bridge:
     container_name: intelbras-bridge
+    # The build context and this .env live in the private ops repo -- they carry the
+    # intelbras cloud account and the device serial. Same condition as the .example configs.
     build: ./intelbras/bridge
     restart: unless-stopped
     depends_on:
