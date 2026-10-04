@@ -45,6 +45,19 @@ services:
     env_file:
       - ./intelbras/bridge/.env
 
+  # Exposes HA entities to Alexa as Matter devices, which answer right away --
+  # the Intelbras skill only reflects a change on its next poll. Matter
+  # commissioning and mDNS only work on the host network (5540).
+  matter-hub:
+    container_name: matter-hub
+    image: ghcr.io/riddix/home-assistant-matter-hub:2.0.48
+    restart: unless-stopped
+    network_mode: host
+    env_file:
+      - ./matter-hub/.env
+    volumes:
+      - ./matter-hub/data:/data
+
 volumes:
   home-assistant:
   nodered:
