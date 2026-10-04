@@ -16,6 +16,10 @@ services:
     depends_on:
       - database
     restart: always
+    # 03/10: the job queue grew this container to 4.4GB, the page cache
+    # collapsed and the whole host went to IO starvation. A limit kills
+    # the container instead of the lab.
+    mem_limit: 4g
     healthcheck:
       disable: false
     environment:
