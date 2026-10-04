@@ -6,7 +6,7 @@
 ![Docker](https://img.shields.io/badge/dockerized-yes-2496ED?logo=docker&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-![Proxmox](https://img.shields.io/badge/Proxmox-VE-E57000?logo=proxmox&logoColor=white)
+![Debian](https://img.shields.io/badge/Debian-host-A81D33?logo=debian&logoColor=white)
 ![OpenWrt](https://img.shields.io/badge/OpenWrt-router-00B5E2?logo=openwrt&logoColor=white)
 ![WireGuard](https://img.shields.io/badge/WireGuard-VPN-88171A?logo=wireguard&logoColor=white)
 ![Cloudflare](https://img.shields.io/badge/Cloudflare-Tunnel-F38020?logo=cloudflare&logoColor=white)
@@ -39,8 +39,8 @@ My network is segmented into VLANs for isolation and security:
 
 ### 🖥️ Host
 
-* **Proxmox** - Primary virtualization
-* **TrueNAS VM** - Central storage (NFS/SMB)
+* **Debian** - bare metal, Docker straight on the host, no hypervisor
+* **ZFS over SMB** - central storage, on a machine of its own
 
 ### 🌐 Network
 

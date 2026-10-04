@@ -27,8 +27,8 @@ Minha rede é segmentada em VLANs para isolamento e segurança:
 
 ### 🖥️ Host
 
-* **Proxmox** - virtualização principal
-* **TrueNAS VM** - storage central (NFS/SMB)
+* **Debian** - bare metal, Docker direto no host, sem hypervisor
+* **ZFS por SMB** - storage central, em uma máquina separada
 
 ### 🌐 Rede
 
