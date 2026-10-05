@@ -6,7 +6,7 @@ services:
         image: diygod/rsshub:2026-10-01 # or ghcr.io/diygod/rsshub
         restart: always
         ports:
-            - '1200:1200'
+            - '10.0.20.2:1200:1200'
         environment:
             NODE_ENV: production
             CACHE_TYPE: redis

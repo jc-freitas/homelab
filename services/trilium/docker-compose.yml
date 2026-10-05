@@ -5,7 +5,7 @@ services:
     environment:
       - TRILIUM_DATA_DIR=/home/node/trilium-data
     ports:
-      - '8181:8080'
+      - '10.0.20.2:8181:8080'
     volumes:
       - /srv/docker-data/trilium:/home/node/trilium-data
       - /etc/timezone:/etc/timezone:ro
