@@ -63,6 +63,13 @@
       dependencyDashboardApproval: true,
       minimumReleaseAge: "14 days",
     },
+    {
+      // Last word on the databases: a patch still recreates the container, and an
+      // unattended recreate is how the evolution whatsapp pairing was lost
+      matchDatasources: ["docker"],
+      matchPackageNames: ["/postgres/", "/mariadb/", "/redis/", "/mysql/"],
+      automerge: false,
+    },
   ],
 
   dependencyDashboard: true,
