@@ -4,8 +4,8 @@ services:
     image: n8nio/n8n:2.42.2
     restart: always
     ports:
-      - "5678:5678"
-      - "5679:5679"
+      - "10.0.20.2:5678:5678"
+      - "10.0.20.2:5679:5679"
     environment:
       - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
       - N8N_HOST=${SUBDOMAIN}.${DOMAIN_NAME}

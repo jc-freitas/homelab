@@ -19,7 +19,7 @@ services:
     environment:
       - TZ=America/Los_Angeles
     ports:
-      - "1880:1880"
+      - "10.0.20.2:1880:1880"
     volumes:
       - nodered:/data
 
@@ -28,6 +28,8 @@ services:
     image: eclipse-mosquitto:2.0.22
     restart: unless-stopped
     ports:
+      # all interfaces on purpose: home assistant runs on the host network
+      # and connects to this broker over localhost
       - "1883:1883"
     volumes:
       - ./intelbras/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
