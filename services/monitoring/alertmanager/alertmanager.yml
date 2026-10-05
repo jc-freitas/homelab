@@ -1,0 +1,28 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: lab
+  group_by: ['alertname']
+  group_wait: 30s
+  group_interval: 5m
+  # One pair of eyes watches this lab: repeating every 4h keeps a real problem
+  # visible without turning the phone into a feed
+  repeat_interval: 4h
+
+receivers:
+  - name: lab
+    webhook_configs:
+      # Alertmanager cannot template a webhook body and the two transports want
+      # different ones -- Evolution takes {number,text} with an apikey header,
+      # Telegram takes a bot path. The adapter beside it formats both, which
+      # also keeps every credential out of this file.
+      - url: http://alert-webhook:9099/alert
+        send_resolved: true
+
+inhibit_rules:
+  # An exporter that is down cannot produce useful numbers, so its own
+  # threshold alerts are noise until it answers again
+  - source_matchers: ['alertname = "TargetDown"']
+    target_matchers: ['severity = "warning"']
+    equal: ['job']

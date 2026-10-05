@@ -48,6 +48,9 @@ services:
     restart: unless-stopped
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      # The alert conditions: prometheus evaluates these every 15s and hands
+      # whatever is firing to alertmanager
+      - ./prometheus/rules:/etc/prometheus/rules:ro
       - prometheus-data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -56,6 +59,39 @@ services:
     depends_on:
       - node-exporter
       - cadvisor
+    networks:
+      - monitoring
+
+  alertmanager:
+    image: prom/alertmanager:v0.28.1
+    container_name: alertmanager
+    restart: unless-stopped
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager-data:/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+    ports:
+      - "10.0.20.2:9093:9093"
+    networks:
+      - monitoring
+
+  alert-webhook:
+    # No build and no dependency to install: a broken image is never the reason
+    # an alert fails to arrive
+    image: python:3.12.13-slim
+    container_name: alert-webhook
+    restart: unless-stopped
+    command: ["python", "-u", "/app/adapter.py"]
+    volumes:
+      - ./alert-webhook/adapter.py:/app/adapter.py:ro
+    environment:
+      EVOLUTION_URL: ${EVOLUTION_URL}
+      EVOLUTION_API_KEY: ${EVOLUTION_API_KEY}
+      ALERT_WHATSAPP_TO: ${ALERT_WHATSAPP_TO}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}
     networks:
       - monitoring
 
@@ -79,6 +115,7 @@ services:
 
 volumes:
   prometheus-data:
+  alertmanager-data:
   grafana-data:
 
 networks:

@@ -1,0 +1,80 @@
+groups:
+  - name: host
+    rules:
+      - alert: TargetDown
+        expr: up == 0
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: "exporter {{ $labels.job }} has not answered a scrape for 10m"
+
+      - alert: DiskSpaceLow
+        expr: >-
+          node_filesystem_avail_bytes{mountpoint=~"/|/srv"}
+          / node_filesystem_size_bytes{mountpoint=~"/|/srv"} < 0.10
+        for: 15m
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{ $labels.mountpoint }} is under 10% free"
+
+      # The host has one disk for /, /var and /srv, so a filesystem running out
+      # does not degrade one service -- it starves every container's IO queue.
+      # Six hours of slope is enough to see a backup or a library growing.
+      - alert: DiskFillingWithin24h
+        expr: >-
+          predict_linear(node_filesystem_avail_bytes{mountpoint=~"/|/srv"}[6h], 24 * 3600) < 0
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $labels.mountpoint }} is on course to fill within 24h"
+
+      # Load average lies here: it counts tasks blocked on IO the same as tasks
+      # computing. In the 03/10 incident load hit 147 with the CPU idle, and the
+      # only metric that said so was io pressure.
+      - alert: IOStarvation
+        expr: rate(node_pressure_io_waiting_seconds_total[5m]) > 0.4
+        for: 15m
+        labels:
+          severity: critical
+        annotations:
+          summary: "tasks have been blocked on IO over 40% of the time for 15m"
+
+      # MemAvailable stays comfortable while the kernel is already squeezing the
+      # page cache to nothing -- memory pressure is what shows the squeeze.
+      - alert: MemoryStall
+        expr: rate(node_pressure_memory_stalled_seconds_total[5m]) > 0.05
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "the host is stalling on memory reclaim"
+
+      # Eleven CIFS mounts serve the media and backup paths. A network flap that
+      # drops them leaves containers writing into empty local directories, which
+      # looks healthy from the outside and is how data gets written nowhere.
+      - alert: CifsMountsMissing
+        expr: count(node_filesystem_size_bytes{fstype="cifs"}) < 11
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "only {{ $value }} of the 11 CIFS mounts are present"
+
+  - name: containers
+    rules:
+      # A container with a memory limit that sits against it is about to be
+      # OOM-killed; without the limit it takes the other 58 down with it, which
+      # is exactly what the immich worker did on 04/10.
+      - alert: ContainerNearMemoryLimit
+        expr: >-
+          container_spec_memory_limit_bytes{name!=""} > 0
+          and container_memory_working_set_bytes{name!=""}
+          / container_spec_memory_limit_bytes{name!=""} > 0.9
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $labels.name }} is above 90% of its memory limit"

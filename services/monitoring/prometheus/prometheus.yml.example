@@ -2,6 +2,17 @@ global:
   scrape_interval: 15s
   evaluation_interval: 15s
 
+# An alert is a promql expression plus how long it has to stay true. These files
+# hold them; prometheus re-evaluates every evaluation_interval and hands what is
+# firing to alertmanager, which decides who gets told and how often.
+rule_files:
+  - /etc/prometheus/rules/*.yml
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
+
 # Only the exporters of the services defined in this repo. The live file is in
 # the private ops repo.
 scrape_configs:
