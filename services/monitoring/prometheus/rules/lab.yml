@@ -78,3 +78,68 @@ groups:
           severity: warning
         annotations:
           summary: "{{ $labels.name }} is above 90% of its memory limit"
+
+  # These read the host's own textfile collector, published every minute by
+  # net-metrics.sh in the private ops repo: it compares what
+  # /etc/network/interfaces DECLARES with what the kernel is running.
+  #
+  # NO absent() GUARD ON PURPOSE. An absent() here would page forever on a host
+  # where the publisher is not installed, which is the defect this very config
+  # had on 09/10 -- a scrape job for an exporter that does not exist, queued to
+  # alert every 4h for ever. A series that never appears fires nothing, and that
+  # is the honest failure mode for a rule whose data source is optional.
+  - name: network
+    rules:
+      # The outage this whole group exists for: on 08/10 vlan20 was up with no
+      # address for about ten hours and nothing noticed. ip_nonlocal_bind=1 lets
+      # every docker-proxy bind and LISTEN on an address the host does not hold,
+      # so docker reported 59 containers Up, each healthcheck passed inside its
+      # own container, and all 29 published ports answered nothing.
+      - alert: VlanAddressMissing
+        expr: homelab_vlan_address_present == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{ $labels.dev }} is missing {{ $labels.addr }} -- published ports answer nothing"
+
+      # Without the default in the bypass table only the blackhole is left, so
+      # qBittorrent runs with no internet at all and reports "External IP: N/A"
+      # rather than failing.
+      - alert: QbtWanRouteMissing
+        expr: homelab_qbt_table_default_present == 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "the qbt WAN-bypass table lost its default route"
+
+      # The blackhole is the kill-switch: if it is gone, torrent traffic can
+      # leave through the Mullvad tunnel instead of being dropped.
+      - alert: QbtKillSwitchMissing
+        expr: homelab_qbt_table_blackhole_present == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "the qbt kill-switch route is gone -- traffic can leak to the tunnel"
+
+      # Three of the four rules send lab and docker-bridge destinations back to
+      # the main table. Losing them swallows the RETURN path of any container
+      # calling 10.0.20.2, which looked like a broken qbt for weeks.
+      - alert: QbtPolicyRulesDrifted
+        expr: homelab_qbt_policy_rules_live < homelab_qbt_policy_rules_declared
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $value }} qbt policy rules are loaded, fewer than declared"
+
+      # If the publisher stops, every alert above goes quiet while looking fine.
+      - alert: NetStateMetricsStale
+        expr: time() - homelab_netstate_last_run_timestamp_seconds > 600
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "declared-vs-live network metrics have not been refreshed for 10m"
