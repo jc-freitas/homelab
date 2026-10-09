@@ -86,6 +86,11 @@ jobs:
             # No --remove-orphans: containers started outside compose share these
             # project names, and it would delete them.
             docker compose -f "$f" up -d || rc=1
+            # A config-only change does not recreate the container, so a service
+            # that reads its files at start is left running the old ones. sh and
+            # not -x: this repo is authored on Windows and the exec bit does not
+            # survive the round trip.
+            [ -f "$d/deploy-reload.sh" ] && sh "$d/deploy-reload.sh"
             echo "::endgroup::"
           done
           exit "$rc"
