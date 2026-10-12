@@ -3,7 +3,7 @@
 # Deployed at /opt/docker-usb/vaultwarden/ as docker-compose.yml.
 services:
   vaultwarden:
-    image: vaultwarden/server:1.37.1
+    image: vaultwarden/server:1.37.4
     container_name: vaultwarden
     restart: unless-stopped
     # raw: ADMIN_TOKEN is an Argon2 PHC string, and compose would read its
