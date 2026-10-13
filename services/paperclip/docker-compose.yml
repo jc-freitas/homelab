@@ -6,6 +6,11 @@ services:
     pull_policy: never
     restart: unless-stopped
     pids_limit: 2048
+    # an agent run once took the whole host down: cap it so only this container dies
+    mem_limit: 3g
+    memswap_limit: 3g
+    cpus: 1.5
+    oom_score_adj: 500
     stop_grace_period: 90s
     ports:
       - '10.0.20.2:3100:3100'
