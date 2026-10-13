@@ -2,7 +2,7 @@
 # bound to the management VLAN (10.0.1.1) to leave 80/443 free here.
 services:
   caddy:
-    image: caddy:2.11.4-alpine
+    image: caddy:2.11.7-alpine
     container_name: caddy
     restart: unless-stopped
     network_mode: host
