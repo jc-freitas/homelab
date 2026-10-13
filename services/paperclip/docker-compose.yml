@@ -1,0 +1,26 @@
+services:
+  paperclip:
+    # no published image; compose builds it straight from the upstream repo
+    build:
+      context: https://github.com/paperclipai/paperclip.git#master
+      dockerfile: Dockerfile
+      target: production
+    image: paperclip-local
+    restart: unless-stopped
+    pids_limit: 2048
+    stop_grace_period: 90s
+    ports:
+      - '10.0.20.2:3100:3100'
+    environment:
+      HOST: 0.0.0.0
+      PAPERCLIP_HOME: /paperclip
+      PAPERCLIP_DEPLOYMENT_MODE: authenticated
+      PAPERCLIP_DEPLOYMENT_EXPOSURE: private
+      PAPERCLIP_PUBLIC_URL: http://paperclip.home.arpa
+      PAPERCLIP_ALLOWED_HOSTNAMES: paperclip.home.arpa,10.0.20.2
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?set BETTER_AUTH_SECRET in .env}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+    volumes:
+      - /srv/docker-data/paperclip:/paperclip
+      - /etc/localtime:/etc/localtime:ro

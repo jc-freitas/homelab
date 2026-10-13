@@ -1,0 +1,21 @@
+services:
+  9router:
+    image: decolua/9router:latest
+    restart: unless-stopped
+    ports:
+      - '10.0.20.2:20128:20128'
+    environment:
+      DATA_DIR: /app/data
+      PORT: '20128'
+      HOSTNAME: 0.0.0.0
+      NODE_ENV: production
+      BASE_URL: http://9router.home.arpa
+      NEXT_PUBLIC_BASE_URL: http://9router.home.arpa
+      REQUIRE_API_KEY: 'true'
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env}
+      INITIAL_PASSWORD: ${INITIAL_PASSWORD:?set INITIAL_PASSWORD in .env}
+      API_KEY_SECRET: ${API_KEY_SECRET:?set API_KEY_SECRET in .env}
+      MACHINE_ID_SALT: ${MACHINE_ID_SALT:?set MACHINE_ID_SALT in .env}
+    volumes:
+      - /srv/docker-data/9router:/app/data
+      - /etc/localtime:/etc/localtime:ro
