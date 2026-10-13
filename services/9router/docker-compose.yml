@@ -19,3 +19,22 @@ services:
     volumes:
       - /srv/docker-data/9router:/app/data
       - /etc/localtime:/etc/localtime:ro
+
+  # compresses prompts before they reach 9router; clients point ANTHROPIC_BASE_URL here
+  # and send the proxy token as x-headroom-proxy-token (ANTHROPIC_CUSTOM_HEADERS)
+  headroom:
+    image: ghcr.io/headroomlabs-ai/headroom:0.40.0
+    restart: unless-stopped
+    command: --no-subscription-tracking
+    ports:
+      - '10.0.20.2:8787:8787'
+    environment:
+      HEADROOM_HOST: 0.0.0.0
+      HEADROOM_PROXY_TOKEN: ${HEADROOM_PROXY_TOKEN:?set HEADROOM_PROXY_TOKEN in .env}
+      ANTHROPIC_TARGET_API_URL: http://9router:20128
+    volumes:
+      - /srv/docker-data/headroom:/root/.headroom
+    mem_limit: 1g
+    memswap_limit: 1g
+    depends_on:
+      - 9router
