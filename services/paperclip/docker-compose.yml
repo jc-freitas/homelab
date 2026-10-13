@@ -1,11 +1,9 @@
 services:
   paperclip:
-    # no published image; compose builds it straight from the upstream repo
-    build:
-      context: https://github.com/paperclipai/paperclip.git#master
-      dockerfile: Dockerfile
-      target: production
+    # no published image and the build froze the server: built on the PC and
+    # loaded here with docker save | docker load
     image: paperclip-local
+    pull_policy: never
     restart: unless-stopped
     pids_limit: 2048
     stop_grace_period: 90s
