@@ -19,6 +19,9 @@ services:
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?set BETTER_AUTH_SECRET in .env}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      NINEROUTER_KEY: ${NINEROUTER_KEY:-}
+      OPENCODE_ALLOW_ALL_MODELS: 'true'
+      PAPERCLIP_OPENCODE_PROVIDERS: '{"9router":{"npm":"@ai-sdk/openai-compatible","options":{"baseURL":"http://10.0.20.2:20128/v1","apiKey":"{env:NINEROUTER_KEY}"},"models":{"${NINEROUTER_MODEL:-cc/claude-sonnet-4-5}":{}}}}'
     volumes:
       - /srv/docker-data/paperclip:/paperclip
       - /etc/localtime:/etc/localtime:ro
