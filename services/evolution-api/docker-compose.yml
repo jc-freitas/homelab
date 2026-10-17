@@ -59,7 +59,7 @@ services:
 
   postgres-exporter:
     container_name: evolution-postgres-exporter
-    image: prometheuscommunity/postgres-exporter:v0.15.0
+    image: prometheuscommunity/postgres-exporter:v0.20.1
     restart: always
     environment:
       DATA_SOURCE_NAME: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@evolution-postgres:5432/${POSTGRES_DB}?sslmode=disable"
