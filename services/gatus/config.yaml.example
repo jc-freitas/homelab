@@ -23,7 +23,8 @@ alerting:
       Content-Type: "application/json"
       apikey: "${EVOLUTION_API_KEY}"
     # A condition carrying a double quote of its own would void this JSON body.
-    body: '{"number":"${ALERT_WHATSAPP_TO}","text":"*[ALERT_TRIGGERED_OR_RESOLVED]* [ENDPOINT_GROUP]/[ENDPOINT_NAME]\n[ENDPOINT_URL]\n[RESULT_CONDITIONS]\n[RESULT_ERRORS]"}'
+    # Descriptions must be one line without double quotes.
+    body: '{"number":"${ALERT_WHATSAPP_TO}","text":"*[ALERT_TRIGGERED_OR_RESOLVED]* [ENDPOINT_GROUP]/[ENDPOINT_NAME]\n[RESULT_ERRORS]\n[RESULT_CONDITIONS] -- [ENDPOINT_URL]\n[ALERT_DESCRIPTION]"}'
     placeholders:
       ALERT_TRIGGERED_OR_RESOLVED:
         TRIGGERED: "CAIU"
