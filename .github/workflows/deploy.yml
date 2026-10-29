@@ -43,7 +43,19 @@ jobs:
         id: pull
         run: |
           before=$(git -C "$TARGET" rev-parse HEAD)
-          git -C "$TARGET" pull --ff-only
+          git -C "$TARGET" fetch origin main
+          remote=$(git -C "$TARGET" rev-parse FETCH_HEAD)
+          if git -C "$TARGET" merge-base --is-ancestor "$before" "$remote"; then
+            git -C "$TARGET" merge --ff-only "$remote"
+          elif git -C "$TARGET" merge-base --is-ancestor "$remote" "$before"; then
+            echo "Deployment checkout is ahead of origin/main; refusing to discard local commits." >&2
+            exit 1
+          else
+            backup_ref="refs/backup/deploy-pre-sync/$(date -u +%Y%m%dT%H%M%SZ)"
+            git -C "$TARGET" update-ref "$backup_ref" "$before"
+            echo "Histories diverged; saved old HEAD at $backup_ref and syncing to origin/main."
+            git -C "$TARGET" reset --hard "$remote"
+          fi
           after=$(git -C "$TARGET" rev-parse HEAD)
           echo "before=$before" >> "$GITHUB_OUTPUT"
           echo "after=$after" >> "$GITHUB_OUTPUT"
