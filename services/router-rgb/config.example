@@ -6,4 +6,6 @@ MQTT_PASSWORD='replace-with-a-unique-password'
 MQTT_BASE='homelab/router/rgb'
 UNIQUE_ID='openwrt_router_rgb'
 RGB_LED='/sys/class/leds/rgb:status'
+# The W6x driver labels the pins RGB, but visual channel testing confirms GRB wiring.
+CHANNEL_ORDER='grb'
 STATE_FILE='/etc/router-rgb/state.json'

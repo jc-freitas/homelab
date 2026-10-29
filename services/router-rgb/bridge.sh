@@ -9,6 +9,7 @@ CONFIG=${ROUTER_RGB_CONFIG:-/etc/router-rgb/config}
 MQTT_PORT=${MQTT_PORT:-1883}
 MQTT_BASE=${MQTT_BASE:-homelab/router/rgb}
 RGB_LED=${RGB_LED:-/sys/class/leds/rgb:status}
+CHANNEL_ORDER=${CHANNEL_ORDER:-grb}
 STATE_FILE=${STATE_FILE:-/etc/router-rgb/state.json}
 UNIQUE_ID=${UNIQUE_ID:-openwrt_router_rgb}
 DISCOVERY_TOPIC="homeassistant/light/$UNIQUE_ID/config"
@@ -28,7 +29,12 @@ publish() {
 }
 read_led() {
     [ "$(cat "$RGB_LED/multi_index")" = 'red green blue' ] || return 1
-    read -r R G B < "$RGB_LED/multi_intensity" || return 1
+    read -r A B C < "$RGB_LED/multi_intensity" || return 1
+    case "$CHANNEL_ORDER" in
+        rgb) R=$A; G=$B; B=$C ;;
+        grb) G=$A; R=$B; B=$C ;;
+        *) return 1 ;;
+    esac
     read -r BRIGHTNESS < "$RGB_LED/brightness" || return 1
     uint8 "$R" && uint8 "$G" && uint8 "$B" && uint8 "$BRIGHTNESS" || return 1
     [ "$BRIGHTNESS" -eq 0 ] || LAST_BRIGHTNESS=$BRIGHTNESS
@@ -41,8 +47,7 @@ state_json() {
 }
 report() {
     read_led || return 1
-    publish "$MQTT_BASE/state" "$(state_json)" || return 1
-    publish "$MQTT_BASE/availability" online
+    publish "$MQTT_BASE/state" "$(state_json)"
 }
 save_state() {
     # Called only on accepted changes: no periodic flash writes.
@@ -74,7 +79,11 @@ apply_command() {
     if [ -n "$color" ]; then R=$nr; G=$ng; B=$nb; fi
     # Validation finishes before touching sysfs. Linux scales RGB by brightness.
     echo none > "$RGB_LED/trigger" || return 1
-    echo "$R $G $B" > "$RGB_LED/multi_intensity" || return 1
+    case "$CHANNEL_ORDER" in
+        rgb) echo "$R $G $B" > "$RGB_LED/multi_intensity" || return 1 ;;
+        grb) echo "$G $R $B" > "$RGB_LED/multi_intensity" || return 1 ;;
+        *) return 1 ;;
+    esac
     echo "$target" > "$RGB_LED/brightness" || return 1
     read_led && save_state
 }
@@ -115,6 +124,7 @@ SUB_PID=$!
 # Hold the reader open even through read timeouts; otherwise the writer gets SIGPIPE.
 exec 3< "$WORK/commands"
 discover || log 'discovery publish failed; will retry'
+publish "$MQTT_BASE/availability" online || log 'availability publish failed; will retry'
 report || log 'initial state publish failed; will retry'
 log 'bridge started'
 while kill -0 "$SUB_PID" 2>/dev/null; do
