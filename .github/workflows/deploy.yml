@@ -33,7 +33,7 @@ jobs:
             echo "Untracked state lives here: jellyfin/data, homebox/data, matter-hub keys." >&2
             exit 1
           }
-          git -C "$TARGET" diff --quiet || {
+          git -C "$TARGET" diff --quiet && git -C "$TARGET" diff --cached --quiet || {
             echo "$TARGET has uncommitted local changes:" >&2
             git -C "$TARGET" status --short >&2
             exit 1
