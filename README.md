@@ -54,8 +54,7 @@ My network is segmented into VLANs for isolation and security:
 
 All services run via Docker, split across three hosts:
 
-Caddy, Gatus, Homepage and Prometheus ship a `.example` config. The live ones list
-services defined in other repos, so they are kept private alongside the host material.
+Caddy, Gatus, Homepage and Prometheus include `.example` configurations to adapt before deployment.
 
 ### Server — `10.0.10.3`
 
@@ -75,7 +74,6 @@ services defined in other repos, so they are kept private alongside the host mat
 | `redis-shared` | Shared Redis instance |
 | `rsshub` | RSS feed generator |
 | `searxng` | Metasearch engine |
-| `trilium` | Notes |
 
 ### Router — `10.0.10.1` (OpenWrt)
 
@@ -94,10 +92,6 @@ Kept on the router so external access and the vault survive a server reboot.
 | --- | --- |
 | `frigate-remote` | NVR for the camera, kept off the server |
 | `immich-ml-remote` | Immich machine learning, offloaded from the server |
-
-> Host-specific recovery scripts, boot-order workarounds and incident
-> write-ups are deliberately **not** in this repo — they live in a separate
-> private one.
 
 ---
 

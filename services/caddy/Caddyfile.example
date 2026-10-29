@@ -2,9 +2,6 @@
 	auto_https off
 }
 
-# Only the services defined in this repo are mapped here. The live Caddyfile
-# is in the private ops repo: it lists every host on the network, public or not.
-#
 # Explicit listen addresses: 10.0.1.1 is left out because LuCI/uhttpd has the
 # management VLAN. The Tailscale IP is here so *.home.arpa also works remotely.
 (lan) {
@@ -74,11 +71,6 @@ http://evolution-ui.home.arpa {
 http://rsshub.home.arpa {
 	import lan
 	reverse_proxy 10.0.20.2:1200
-}
-
-http://trilium.home.arpa {
-	import lan
-	reverse_proxy 10.0.20.2:8181
 }
 
 http://n8n.home.arpa {

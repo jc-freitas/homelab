@@ -79,15 +79,8 @@ groups:
         annotations:
           summary: "{{ $labels.name }} is above 90% of its memory limit"
 
-  # These read the host's own textfile collector, published every minute by
-  # net-metrics.sh in the private ops repo: it compares what
-  # /etc/network/interfaces DECLARES with what the kernel is running.
-  #
-  # NO absent() GUARD ON PURPOSE. An absent() here would page forever on a host
-  # where the publisher is not installed, which is the defect this very config
-  # had on 09/10 -- a scrape job for an exporter that does not exist, queued to
-  # alert every 4h for ever. A series that never appears fires nothing, and that
-  # is the honest failure mode for a rule whose data source is optional.
+  # The textfile collector compares declared interfaces with kernel state.
+  # Missing series are intentional when the optional collector is not installed.
   - name: network
     rules:
       # The outage this whole group exists for: on 08/10 vlan20 was up with no

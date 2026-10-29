@@ -1,5 +1,3 @@
-# Only the services defined in this repo are listed here. The live config is in
-# the private ops repo, where the rest of the dashboard lives.
 - core:
     - Grafana:
         href: http://10.0.20.2:3002
@@ -39,10 +37,6 @@
           url: http://10.0.20.2:3022
           key: "{{HOMEPAGE_VAR_GITEA_KEY}}"
           fields: ["repositories", "notifications", "issues", "pulls"]
-    - Trilium:
-        href: http://10.0.20.2:8181
-        icon: trilium.png
-        description: Notes
     - n8n:
         href: http://10.0.20.2:5678
         icon: n8n.png

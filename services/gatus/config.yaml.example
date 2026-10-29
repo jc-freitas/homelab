@@ -1,5 +1,3 @@
-# Only the services defined in this repo are watched here. The live config is
-# in the private ops repo: it also checks the hosts, the SMB share and the DNS.
 storage:
   type: sqlite
   path: /data/data.db
@@ -138,16 +136,6 @@ endpoints:
   - name: gitea
     group: apps
     url: "http://10.0.20.2:3022/api/healthz"
-    interval: 5m
-    conditions:
-      - "[STATUS] == 200"
-    alerts:
-      - type: custom
-      - type: telegram
-
-  - name: trilium
-    group: apps
-    url: "http://10.0.20.2:8181"
     interval: 5m
     conditions:
       - "[STATUS] == 200"

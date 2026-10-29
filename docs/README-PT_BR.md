@@ -60,7 +60,6 @@ Todos os serviços rodam via Docker, distribuídos em três hosts:
 | `redis-shared` | Instância Redis compartilhada |
 | `rsshub` | Gerador de feeds RSS |
 | `searxng` | Metabuscador |
-| `trilium` | Notas |
 
 ### Roteador — `10.0.10.1` (OpenWrt)
 
@@ -80,10 +79,6 @@ do servidor.
 | --- | --- |
 | `frigate-remote` | NVR da câmera, fora do servidor |
 | `immich-ml-remote` | Machine learning do Immich, tirado do servidor |
-
-> Scripts de recuperação específicos de cada host, contornos de ordem de boot
-> e relatos de incidente **não** ficam neste repositório — estão num outro,
-> privado.
 
 ---
 

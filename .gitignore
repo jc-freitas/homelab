@@ -13,13 +13,13 @@
 *.removed
 *.disabled.bak
 
-# Live configs that list the whole lab -- they live in the private ops repo
+# Deployment configuration
 services/caddy/Caddyfile
 services/gatus/config.yaml
 services/homepage/config/services.yaml
 services/monitoring/prometheus/prometheus.yml
 
-# Carries a secret_key of its own, so it stays out even of the private repo
+# Application configuration with credentials
 services/searxng/config/settings.yml
 
 # Service runtime state
