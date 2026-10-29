@@ -1,0 +1,9 @@
+[Unit]
+Description=Nextcloud background jobs
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/docker exec --user www-data nextcloud-app-1 nice -n 10 php -f /var/www/html/cron.php
+TimeoutStartSec=15min

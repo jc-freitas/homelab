@@ -2,6 +2,7 @@ services:
   db:
     image: mariadb:11.8.9
     restart: always
+    cpu_shares: 4096
     command: --transaction-isolation=READ-COMMITTED
     volumes:
       - db:/var/lib/mysql
@@ -13,6 +14,7 @@ services:
   app:
     image: nextcloud:33.0.9
     restart: always
+    cpu_shares: 8192
     ports:
       - "10.0.20.2:8337:80"
     depends_on:
@@ -22,6 +24,9 @@ services:
       - nextcloud:/var/www/html
       - /mnt/nextcloud-smb:/var/www/html/data
     env_file: .env
+    environment:
+      REDIS_HOST: redis
+      TRUSTED_PROXIES: 10.0.20.1
     networks:
       - default
       - shared-infra
