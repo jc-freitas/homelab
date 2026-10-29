@@ -83,6 +83,7 @@ Caddy, Gatus, Homepage and Prometheus include `.example` configurations to adapt
 | `cloudflared` | Tunnel for external access — `docker-compose.router.yml` |
 | `gatus` | Uptime monitoring — `docker-compose.router.yml` |
 | `vaultwarden` | Password manager |
+| [router-rgb](services/router-rgb/) | Native OpenWrt RGB LED control through Home Assistant |
 
 Kept on the router so external access and the vault survive a server reboot.
 
