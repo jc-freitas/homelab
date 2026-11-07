@@ -15,6 +15,7 @@ services:
     environment:
       - USER_UID=1000
       - USER_GID=1000
+      - GITEA__service__DISABLE_REGISTRATION=true
     restart: always
     networks:
       - gitea
